@@ -22,12 +22,11 @@ defect register and decision log when milestones change (see the `ship-feature` 
 
 ## Status (update when it changes)
 
-- **Done:** Weeks 1–3 on `main`: foundation, auth/permissions, students, staff/assignments, attendance (roster, draft/submit, corrections, lock, history) and reports.
-- **Week 4:** WhatsApp notification system (queue, worker, signed webhook, Settings page; **off by default**, modes off/test/live), QA sweep, backup/restore rehearsal and handover docs (`docs/handover/`) on branch `week-4-notifications-handover`.
-- **Classes & years:** admin screen `Settings → Classes & academic year` (migration `20261027000100`) on branch `classes-and-years`; year-end student promotion is still a change request.
+- **Done (all on `main`, live):** Weeks 1–4 — foundation, auth/permissions, students, staff/assignments, attendance (roster, draft/submit, corrections, lock, history), reports, WhatsApp notification system (**off by default**; modes off/test/live), QA, backup rehearsal, handover docs, production setup guide, and Settings → Classes & academic year.
+- **Next change request:** year-end student promotion into the next year's classes (see `docs/handover/known-issues.md`).
 - **Live:** https://uttamniketan.vercel.app (Vercel project `uttam_niketan`, team `aksundram44-9592s-projects`; pushes to `main` deploy to production). Staff login there needs the hosted database set up.
 - **Next:** school demo and acceptance; WhatsApp go-live only after the checklist in `docs/whatsapp-templates.md`. Post-MVP items are change requests (`docs/handover/known-issues.md`).
-- **Waiting on the owner:** apply migrations to the hosted Supabase project (Vercel's Supabase integration) and turn off sign-ups there; first real admin via `scripts/create-admin.mjs`; set `CRON_SECRET` in Vercel (see `docs/handover/operations.md`).
+- **Waiting on the owner:** hosted database setup per `docs/handover/setup-guide.md` (4 migrations, school setup SQL, sign-ups off, principal account) and `CRON_SECRET` in Vercel.
 - **Waiting on the school:** content/logo/address, class & section names, attendance correction rules, late/excused usage and the 75% threshold, required student fields, whether teachers need guardian phones, Hindi staff UI, CSV import, email vs phone login for teachers.
 
 ## Gotchas learned the hard way
