@@ -67,4 +67,5 @@ Write throwaway Playwright scripts in the scratchpad, not the repo. Pitfalls:
 
 To stop the dev server, never use `pkill -f <pattern>`: the pattern also matches your own shell and
 kills it. Use
-`ps -eo pid,args | awk '/[n]ext dev -p 3200|[n]ext-server/ {print $1}' | xargs -r kill`.
+`ps -eo pid,args | awk '$2 ~ /^next-server/ {print $1}' | xargs -r kill`, which matches only the server
+process's own name. Run it as its own command, not in the same line that started the server.

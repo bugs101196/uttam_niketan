@@ -1,11 +1,21 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isProtectedPath } from "@/lib/auth/paths";
+import { isSupabaseConfigured } from "@/lib/env";
 
 // Refreshes the Supabase session cookie and sends signed-out visitors to the
 // login page. This is a convenience redirect only: every protected page and
 // action still checks the user itself, and RLS guards the data.
 export async function middleware(request: NextRequest) {
+  if (!isSupabaseConfigured()) {
+    // Nobody can be signed in yet; the login page explains that staff access is not set up.
+    if (!isProtectedPath(request.nextUrl.pathname)) return NextResponse.next();
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
