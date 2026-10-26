@@ -30,12 +30,12 @@ node --env-file=.env.local scripts/seed-dev-users.mjs
 
 Password for all of them: `dev-password-123`. The script refuses to run against a non-local URL.
 
-| Email | Role | Sections |
-| --- | --- | --- |
-| admin@example.test | admin | all |
-| teacher1@example.test | teacher | Class 1 – A |
-| teacher2@example.test | teacher | Class 2 – A, Class 3 – A |
-| disabled@example.test | teacher (disabled) | Class 1 – A |
+| Email                 | Role               | Sections                 |
+| --------------------- | ------------------ | ------------------------ |
+| admin@example.test    | admin              | all                      |
+| teacher1@example.test | teacher            | Class 1 – A              |
+| teacher2@example.test | teacher            | Class 2 – A, Class 3 – A |
+| disabled@example.test | teacher (disabled) | Class 1 – A              |
 
 ## 3. Tests
 
