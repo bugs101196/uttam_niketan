@@ -600,6 +600,7 @@ export type Database = {
         Args: { p_error?: string; p_job_id: string; p_outcome: string; p_provider_message_id?: string };
         Returns: undefined;
       };
+      copy_class_structure: { Args: { p_from_year: string; p_to_year: string }; Returns: number };
       correct_attendance_record: {
         Args: {
           p_reason: string;
@@ -669,6 +670,25 @@ export type Database = {
         };
       };
       save_attendance_draft: { Args: { p_records: Json; p_session_id: string }; Returns: number };
+      set_active_academic_year: {
+        Args: { p_year_id: string };
+        Returns: {
+          created_at: string;
+          end_date: string;
+          id: string;
+          is_active: boolean;
+          name: string;
+          school_id: string;
+          start_date: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "academic_years";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       submit_attendance_session: {
         Args: { p_records: Json; p_session_id: string };
         Returns: {
