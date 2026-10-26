@@ -8,7 +8,7 @@ Supabase integration created. No terminal is required.
 1. Go to https://vercel.com → project **uttam_niketan** → **Storage** tab.
 2. Click the Supabase database → **Open in Supabase**. The Supabase dashboard opens on the right project.
 
-## Step 2 — Create the database tables (3 files, in order)
+## Step 2 — Create the database tables (4 files, in order)
 
 In Supabase: left menu **SQL Editor** → **New query**. For each file below, in this order:
 open the link, click **Raw**, select all and copy, paste into the SQL Editor, click **Run**, and wait
@@ -17,6 +17,7 @@ for "Success. No rows returned".
 1. `supabase/migrations/20261026000100_core_schema.sql`
 2. `supabase/migrations/20261026000200_auth_rls_attendance.sql`
 3. `supabase/migrations/20261026000300_absence_notifications.sql`
+4. `supabase/migrations/20261027000100_academic_year_management.sql`
 
 (Files are in the GitHub repo `bugs101196/uttam_niketan`. Use a new query tab for each file.)
 
