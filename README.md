@@ -39,16 +39,16 @@ passwords, disables accounts and assigns sections from the **Staff** page.
 
 ## Scripts
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Development server |
-| `npm run build` | Production build |
-| `npm run lint` / `npm run typecheck` | ESLint / TypeScript |
-| `npm run test:unit` | Unit tests |
-| `npm run test:db` | Database tests: builds a throwaway database from `supabase/migrations` and checks constraints, RLS and the attendance workflow |
-| `npm run test:api` | Attacks the real local Data API as anonymous, teacher, disabled and admin users (needs `SUPABASE_API_TEST_URL` / `_ANON_KEY`; skipped otherwise) |
-| `npm run gen:types` | Regenerate database types from the local Supabase |
-| `npm run check` | Lint + typecheck + all tests (run before every PR) |
+| Command                              | What it does                                                                                                                                     |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`                        | Development server                                                                                                                               |
+| `npm run build`                      | Production build                                                                                                                                 |
+| `npm run lint` / `npm run typecheck` | ESLint / TypeScript                                                                                                                              |
+| `npm run test:unit`                  | Unit tests                                                                                                                                       |
+| `npm run test:db`                    | Database tests: builds a throwaway database from `supabase/migrations` and checks constraints, RLS and the attendance workflow                   |
+| `npm run test:api`                   | Attacks the real local Data API as anonymous, teacher, disabled and admin users (needs `SUPABASE_API_TEST_URL` / `_ANON_KEY`; skipped otherwise) |
+| `npm run gen:types`                  | Regenerate database types from the local Supabase                                                                                                |
+| `npm run check`                      | Lint + typecheck + all tests (run before every PR)                                                                                               |
 
 ### Database tests
 
@@ -62,7 +62,7 @@ which matches `supabase start`). `tests/db/supabase-shim.sql` stands in for Supa
 ```text
 src/app/(public)/      Public website (home, about, academics, admissions, notices, gallery, contact)
 src/app/(auth)/        Staff login and sign-out actions
-src/app/(dashboard)/   Staff app: dashboard, students, staff (admin)
+src/app/(dashboard)/   Staff app: dashboard, attendance, reports, students, staff (admin)
 src/app/actions/       Server actions (language switch)
 src/middleware.ts      Session refresh + redirect to login for staff pages
 src/components/        Layout and form components

@@ -70,7 +70,7 @@ The school currently relies on paper records. The app should be practical on low
 - [ ] Week 3 — Attendance workflow, reports, security and regression testing
 - [ ] Week 4 — WhatsApp integration if approved/setup is ready, full QA, deployment and handover
 
-**Current phase:** Week 2 — auth, permissions, student and staff management built (Days 7–10) on branch `week-2-auth-students`; public page content (Day 6) and Week 1 Days 1–2 awaiting the school  
+**Current phase:** Week 3 — attendance workflow, reports and corrections built (Days 11–15) on branch `week-3-attendance`; production site live at https://uttamniketan.vercel.app (staff login pending hosted database setup)  
 **Target duration:** 4 weeks, approximately 20 working days  
 **Actual start date:** TBD after project scope approval  
 **Target launch date:** TBD based on actual start date and dependencies  
@@ -884,7 +884,7 @@ Update these checkboxes as work progresses.
 - [ ] Design/wireframes approved
 - [x] Next.js repository set up
 - [x] Supabase development project created (by project owner, 2026-10-26; migrations not yet applied to it)
-- [ ] Vercel preview configured
+- [x] Vercel preview configured (production: https://uttamniketan.vercel.app; previews protected by Vercel Authentication)
 - [x] Initial database migration tested (40 automated DB tests on a clean PostgreSQL 16 database)
 - [x] Public website shell navigable (EN/HI switch, mobile menu; placeholder content clearly labelled)
 - [ ] Week 1 release approved
@@ -900,13 +900,13 @@ Update these checkboxes as work progresses.
 - [ ] Week 2 release approved
 
 ### Week 3 — Attendance
-- [ ] Attendance roster implemented
-- [ ] Draft save implemented
-- [ ] Transactional submission implemented
-- [ ] Duplicate-submit protection verified
-- [ ] Correction workflow/audit log implemented
-- [ ] Reports reconcile with persisted data
-- [ ] Security/permission regression passed
+- [x] Attendance roster implemented
+- [x] Draft save implemented
+- [x] Transactional submission implemented
+- [x] Duplicate-submit protection verified
+- [x] Correction workflow/audit log implemented
+- [x] Reports reconcile with persisted data
+- [x] Security/permission regression passed
 - [ ] Week 3 release approved
 
 ### Week 4 — Integration and launch
@@ -959,14 +959,19 @@ Append one entry at the end of each week. Do not delete earlier entries.
 - **Approval status:** pending school demo
 
 ### Week 3
-- **Dates:**
+- **Dates:** 2026-10-26
 - **Completed:**
-- **Demo / release version:**
-- **Tests passed:**
-- **Open defects:**
-- **Decisions made:**
-- **Dependencies / blockers:**
-- **Approval status:**
+  - Day 11–12 — `/attendance`: date picker (school timezone, no future dates) with per-section status (not taken / draft / submitted / locked); "Take attendance" opens the session idempotently. `/attendance/[id]`: phone-first roster with P/A/L/E buttons, absent rows highlighted, "mark unmarked as present", live counts, save draft, submit with a confirmation summary (disabled until every student is marked), unsaved-changes warning. All writes go through the existing database functions.
+  - Day 13 — `/reports/attendance`: daily report by section with totals and rate; monthly report per student for a section (rate = (present+late)/(present+late+absent), rows under 75% highlighted; draft days listed as not counted). Student page shows last 60 days of submitted attendance. Dashboard shows today's submission status.
+  - Day 14 — Admin correction per student with a required reason, lock day, and a history panel (submitted / corrected from→to with reason / locked) from the audit log. Teachers see submitted days read-only.
+  - Day 15 — Direct Data API attack tests for attendance (other sections, corrections/locks by teachers, disabled users, cross-section students, audit visibility); report reconciliation against SQL counts.
+  - No database migration was needed; the Week 1 functions already enforce the rules. Client bundle for the roster page kept at 3.2 kB by keeping Zod out of client code.
+- **Demo / release version:** branch `week-3-attendance`; production still runs `main` (Week 2) until merge.
+- **Tests passed:** lint, typecheck, production build; 95 automated tests (40 DB, 17 direct Data API, 38 unit). Mutation check: counting excused days in the rate made the unit test fail. Browser (390px): teacher take/save/reload/submit flow, tampered section id refused, teacher 404 on another section's session and on /staff, future date clamped to today, admin correction + history + lock. Report reconciliation: daily per-section counts, daily totals, monthly per-student counts (incl. a draft-only section showing 0 counted days) and student history all match SQL over the saved records, on both dev and production builds.
+- **Open defects:** none.
+- **Decisions made:** see Decision Log (Week 3 entries).
+- **Dependencies / blockers:** hosted Supabase migrations + first admin (owner); school confirmation of correction policy, late/excused usage and the 75% threshold.
+- **Approval status:** pending school demo with pilot teachers.
 
 ### Week 4
 - **Dates:**
@@ -1010,6 +1015,10 @@ Record significant decisions and why they were made.
 | 2026-10-26 | Login shows one error for unknown email, wrong password and disabled account | Supabase reveals bans even with a wrong password, so a specific message would expose which emails are disabled accounts | Developer (security) |
 | 2026-10-26 | Teachers see students in their sections but the teacher UI hides guardian contact details | Data minimisation. RLS still allows teachers to read those columns via the API; a column-level restriction (view or column grants) is a candidate hardening task | Pending school confirmation of what teachers need |
 | 2026-10-26 | Staff app is English-only for the MVP; the public website stays bilingual | Keeps Week 2–3 focused on the core workflow; Hindi staff UI would be a change request if teachers need it | Pending school confirmation |
+| 2026-10-26 | Attendance statuses Present / Absent / Late / Excused; attendance rate = (present + late) ÷ (present + late + absent), excused excluded; under 75% highlighted | Common school practice; makes "late" count as attended | Pending school confirmation |
+| 2026-10-26 | Only submitted or locked days count in reports; drafts are shown as "not counted", never as absences | Roadmap attendance invariant 1 | Developer (technical) |
+| 2026-10-26 | Error details are passed to pages as fixed keys, never as text in the URL | Prevents crafted links from showing arbitrary wording on school pages | Developer (security) |
+| 2026-10-26 | Production site public at uttamniketan.vercel.app; Vercel Authentication kept on preview deployments only | A public school website must not require a Vercel login; previews stay private | Project owner (deployment requested) |
 | 2026-10-26 | CSV student import not built yet | Roadmap marks it "if in accepted scope"; not yet confirmed | Pending school confirmation |
 
 ---

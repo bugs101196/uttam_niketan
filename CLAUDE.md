@@ -22,10 +22,11 @@ defect register and decision log when milestones change (see the `ship-feature` 
 
 ## Status (update when it changes)
 
-- **Done:** Week 1 foundation (schema, RLS, attendance functions, public site shell) and Week 2 (auth, permissions, students, staff/assignments). On `main`.
-- **Next:** Week 3 — attendance UI (roster, draft, submit, corrections), daily/monthly reports, security regression.
-- **Waiting on the owner:** apply migrations to the hosted Supabase project and turn off sign-ups there; create the Vercel project and env vars; first real admin via `scripts/create-admin.mjs`.
-- **Waiting on the school:** content/logo/address, class & section names, attendance correction rules, required student fields, whether teachers need guardian phones, Hindi staff UI, CSV import, email vs phone login for teachers.
+- **Done:** Week 1 foundation, Week 2 (auth, permissions, students, staff/assignments) on `main`; Week 3 (attendance UI, reports, corrections, lock, history) on branch `week-3-attendance`.
+- **Live:** https://uttamniketan.vercel.app (Vercel project `uttam_niketan`, team `aksundram44-9592s-projects`; pushes to `main` deploy to production). Staff login there needs the hosted database set up.
+- **Next:** Week 4 — WhatsApp absence notifications (only if the school's WhatsApp Business setup is ready), full QA, backup/restore rehearsal, production release and handover.
+- **Waiting on the owner:** apply migrations to the hosted Supabase project (Vercel's Supabase integration) and turn off sign-ups there; first real admin via `scripts/create-admin.mjs`.
+- **Waiting on the school:** content/logo/address, class & section names, attendance correction rules, late/excused usage and the 75% threshold, required student fields, whether teachers need guardian phones, Hindi staff UI, CSV import, email vs phone login for teachers.
 
 ## Gotchas learned the hard way
 
