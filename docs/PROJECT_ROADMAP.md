@@ -70,7 +70,7 @@ The school currently relies on paper records. The app should be practical on low
 - [ ] Week 3 — Attendance workflow, reports, security and regression testing
 - [ ] Week 4 — WhatsApp integration if approved/setup is ready, full QA, deployment and handover
 
-**Current phase:** Week 1 — technical foundation built ahead of school sign-off (Days 3–5); Days 1–2 (requirements, wireframes) awaiting the school  
+**Current phase:** Week 2 — auth, permissions, student and staff management built (Days 7–10) on branch `week-2-auth-students`; public page content (Day 6) and Week 1 Days 1–2 awaiting the school  
 **Target duration:** 4 weeks, approximately 20 working days  
 **Actual start date:** TBD after project scope approval  
 **Target launch date:** TBD based on actual start date and dependencies  
@@ -883,7 +883,7 @@ Update these checkboxes as work progresses.
 - [ ] School content and class structure collected
 - [ ] Design/wireframes approved
 - [x] Next.js repository set up
-- [ ] Supabase development project created
+- [x] Supabase development project created (by project owner, 2026-10-26; migrations not yet applied to it)
 - [ ] Vercel preview configured
 - [x] Initial database migration tested (40 automated DB tests on a clean PostgreSQL 16 database)
 - [x] Public website shell navigable (EN/HI switch, mobile menu; placeholder content clearly labelled)
@@ -892,10 +892,10 @@ Update these checkboxes as work progresses.
 ### Week 2 — Website, auth and students
 - [ ] All public pages implemented
 - [ ] English/Hindi support verified
-- [ ] Auth and protected routes implemented
-- [ ] Admin and teacher permission policies tested
-- [ ] Student CRUD/search implemented
-- [ ] Teacher assignments implemented
+- [x] Auth and protected routes implemented
+- [x] Admin and teacher permission policies tested (DB-level + direct Data API attack tests + browser)
+- [x] Student CRUD/search implemented
+- [x] Teacher assignments implemented
 - [ ] CSV import validated if in scope
 - [ ] Week 2 release approved
 
@@ -944,14 +944,19 @@ Append one entry at the end of each week. Do not delete earlier entries.
 - **Approval status:** pending school review of requirements and wireframes
 
 ### Week 2
-- **Dates:**
+- **Dates:** 2026-10-26 (started early, alongside Week 1 sign-off)
 - **Completed:**
-- **Demo / release version:**
-- **Tests passed:**
-- **Open defects:**
-- **Decisions made:**
-- **Dependencies / blockers:**
-- **Approval status:**
+  - Day 7 — Supabase SSR auth: email/password login, logout, middleware session refresh and redirect, protected staff routes, safe `?next=` handling, disabled-account sign-out, no public sign-up, `scripts/create-admin.mjs` for the first admin.
+  - Day 8 — `requireStaff` / `requireAdmin` on every protected page and action (teachers get 404 on admin pages), role-filtered navigation, safe database-error messages, direct Data API attack tests.
+  - Day 9 — Students: search (name/admission no.), class-section and status filters, pagination, add/edit with Zod validation, server-derived class/school, Indian mobile normalisation to E.164, duplicate admission/roll number messages on the field, guardian consent checkbox. Teachers get a read-only view of their own sections without guardian contact details.
+  - Day 10 — Staff page (admin): create teacher/admin accounts with a one-time temporary password, disable/re-enable (also blocks Auth sign-in), reset password, assign/unassign sections for the active year.
+  - Local Supabase stack (Docker) used for real end-to-end testing; generated database types; dev-only user seeding script that refuses non-local targets.
+- **Demo / release version:** not yet deployed (Vercel project and hosted migrations pending)
+- **Tests passed:** lint, typecheck, production build; 79 automated tests (40 DB, 11 direct Data API, 28 unit). Browser end-to-end checks on a 390px viewport: login errors, open-redirect attempt, admin vs teacher dashboards, student create/validation/duplicate/edit, teacher 404 on admin pages, staff create/duplicate email/assign/duplicate assignment, disabled teacher kicked out on next request, password reset invalidates the old password.
+- **Open defects:** none open. Fixed during the week: active-year filter used a non-existent sections→academic_years relationship (500 on /students); local config disabled email login entirely.
+- **Decisions made:** see Decision Log (Week 2 entries)
+- **Dependencies / blockers:** apply migrations to the hosted Supabase project; Vercel project + environment variables; disable sign-ups in hosted Auth settings; CSV import scope; school confirmation of required student fields.
+- **Approval status:** pending school demo
 
 ### Week 3
 - **Dates:**
@@ -980,7 +985,8 @@ Add one row per issue. Do not include real student details or secrets.
 
 | ID | Title | Priority | Environment | Status | Owner | Fix version / retest |
 |---|---|---|---|---|---|---|
-| BUG-001 | TBD | P2 | Preview | Open | TBD | TBD |
+| BUG-001 | /students returned 500: active-year filter joined sections→academic_years directly (no such relationship) | P1 | Local | Closed | Developer | Fixed on week-2 branch; browser retest passed 2026-10-26 |
+| BUG-002 | Local Supabase config disabled email login entirely when turning off sign-ups | P1 | Local | Closed | Developer | Fixed in supabase/config.toml; login + blocked sign-up verified 2026-10-26 |
 
 ---
 
@@ -999,6 +1005,12 @@ Record significant decisions and why they were made.
 | 2026-10-26 | Notification queue table deferred to the Week 4 migration | Keeps Week 1–3 focused on the core; submit function already records absent counts for the audit trail | Developer (technical) |
 | 2026-10-26 | Guardian phone stored in E.164 format; guardian notification consent stored per student (default false) | Required for WhatsApp later; consent defaults to no messaging | Developer (technical) |
 | 2026-10-26 | Provisional class list: Nursery, LKG, UKG, Class 1–8, one section "A" each (seed only) | Placeholder until the school confirms class/section naming | Pending school confirmation |
+| 2026-10-26 | Staff sign in with email + password; accounts created only by an admin (temporary password shown once); no public sign-up | Matches "no public self-registration"; works without an email service. Phone/OTP login can be added later if teachers lack email | Pending school confirmation |
+| 2026-10-26 | Disabling a staff account sets `is_active = false` and bans the Auth user | App and RLS deny disabled profiles on every request; the ban also stops sign-in and token refresh | Developer (technical) |
+| 2026-10-26 | Login shows one error for unknown email, wrong password and disabled account | Supabase reveals bans even with a wrong password, so a specific message would expose which emails are disabled accounts | Developer (security) |
+| 2026-10-26 | Teachers see students in their sections but the teacher UI hides guardian contact details | Data minimisation. RLS still allows teachers to read those columns via the API; a column-level restriction (view or column grants) is a candidate hardening task | Pending school confirmation of what teachers need |
+| 2026-10-26 | Staff app is English-only for the MVP; the public website stays bilingual | Keeps Week 2–3 focused on the core workflow; Hindi staff UI would be a change request if teachers need it | Pending school confirmation |
+| 2026-10-26 | CSV student import not built yet | Roadmap marks it "if in accepted scope"; not yet confirmed | Pending school confirmation |
 
 ---
 
