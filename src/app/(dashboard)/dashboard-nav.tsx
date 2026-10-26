@@ -7,6 +7,8 @@ import type { StaffRole } from "@/lib/auth/staff";
 // Hiding links is for convenience only; each page enforces its own access.
 const items: { href: string; label: string; roles: StaffRole[] }[] = [
   { href: "/dashboard", label: "Dashboard", roles: ["admin", "teacher"] },
+  { href: "/attendance", label: "Attendance", roles: ["admin", "teacher"] },
+  { href: "/reports/attendance", label: "Reports", roles: ["admin", "teacher"] },
   { href: "/students", label: "Students", roles: ["admin", "teacher"] },
   { href: "/staff", label: "Staff", roles: ["admin"] },
 ];
