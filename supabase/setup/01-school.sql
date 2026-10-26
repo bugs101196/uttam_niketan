@@ -1,5 +1,5 @@
 -- Uttam Niketan: one-time production setup (school, academic year, classes, sections).
--- Run ONCE in the Supabase SQL Editor, AFTER the three migration files.
+-- Run ONCE in the Supabase SQL Editor, AFTER all the migration files (supabase/migrations, in order).
 -- Creates no students. Class names are provisional; adjust the list below
 -- before running if the school uses different names or more sections.
 
