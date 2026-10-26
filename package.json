@@ -15,7 +15,7 @@
     "format:check": "prettier --check .",
     "check": "npm run lint && npm run typecheck && npm test",
     "test:api": "vitest run --project api",
-    "gen:types": "supabase gen types typescript --local --schema public > src/types/database.ts && prettier --write src/types/database.ts"
+    "gen:types": "npx --yes supabase@2 gen types typescript --local --schema public > src/types/database.ts.tmp && mv src/types/database.ts.tmp src/types/database.ts && prettier --write src/types/database.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -27,6 +27,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22.20.5",

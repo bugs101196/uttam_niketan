@@ -8,7 +8,7 @@ export async function closePool() {
   await pool.end();
 }
 
-type Actor = string | "anon" | "system";
+type Actor = string | "anon" | "system" | "service";
 
 export interface DbError {
   code: string;
@@ -20,6 +20,7 @@ export interface DbError {
  * other's data. Each query runs as a chosen actor:
  *   - "system": the migration owner, bypasses RLS (fixtures only)
  *   - "anon": an unauthenticated visitor
+ *   - "service": the server-side service role (notification worker, webhook)
  *   - a user id: an authenticated Supabase user with that id
  */
 export class Tx {
@@ -27,9 +28,10 @@ export class Tx {
 
   private async become(actor: Actor) {
     await this.client.query("reset role");
-    const sub = actor === "anon" || actor === "system" ? "" : actor;
+    const sub = actor === "anon" || actor === "system" || actor === "service" ? "" : actor;
     await this.client.query("select set_config('request.jwt.claim.sub', $1, true)", [sub]);
     if (actor === "anon") await this.client.query("set role anon");
+    else if (actor === "service") await this.client.query("set role service_role");
     else if (actor !== "system") await this.client.query("set role authenticated");
   }
 

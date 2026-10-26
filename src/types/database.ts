@@ -254,6 +254,98 @@ export type Database = {
           },
         ];
       };
+      notification_jobs: {
+        Row: {
+          attempts: number;
+          attendance_date: string;
+          attendance_record_id: string;
+          created_at: string;
+          dedupe_key: string;
+          delivered_at: string | null;
+          failed_at: string | null;
+          id: string;
+          last_error: string | null;
+          max_attempts: number;
+          next_attempt_at: string;
+          provider_message_id: string | null;
+          read_at: string | null;
+          recipient_phone: string;
+          school_id: string;
+          sent_at: string | null;
+          status: Database["public"]["Enums"]["notification_status"];
+          student_id: string;
+          template_language: Database["public"]["Enums"]["app_language"];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          attempts?: number;
+          attendance_date: string;
+          attendance_record_id: string;
+          created_at?: string;
+          dedupe_key: string;
+          delivered_at?: string | null;
+          failed_at?: string | null;
+          id?: string;
+          last_error?: string | null;
+          max_attempts?: number;
+          next_attempt_at?: string;
+          provider_message_id?: string | null;
+          read_at?: string | null;
+          recipient_phone: string;
+          school_id: string;
+          sent_at?: string | null;
+          status?: Database["public"]["Enums"]["notification_status"];
+          student_id: string;
+          template_language: Database["public"]["Enums"]["app_language"];
+          updated_at?: string;
+        };
+        Update: {
+          attempts?: number;
+          attendance_date?: string;
+          attendance_record_id?: string;
+          created_at?: string;
+          dedupe_key?: string;
+          delivered_at?: string | null;
+          failed_at?: string | null;
+          id?: string;
+          last_error?: string | null;
+          max_attempts?: number;
+          next_attempt_at?: string;
+          provider_message_id?: string | null;
+          read_at?: string | null;
+          recipient_phone?: string;
+          school_id?: string;
+          sent_at?: string | null;
+          status?: Database["public"]["Enums"]["notification_status"];
+          student_id?: string;
+          template_language?: Database["public"]["Enums"]["app_language"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notification_jobs_attendance_record_id_fkey";
+            columns: ["attendance_record_id"];
+            isOneToOne: false;
+            referencedRelation: "attendance_records";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notification_jobs_school_id_fkey";
+            columns: ["school_id"];
+            isOneToOne: false;
+            referencedRelation: "schools";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notification_jobs_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           created_at: string;
@@ -302,6 +394,7 @@ export type Database = {
           name_hi: string | null;
           timezone: string;
           updated_at: string;
+          whatsapp_enabled: boolean;
         };
         ComputedFields: never;
         Insert: {
@@ -312,6 +405,7 @@ export type Database = {
           name_hi?: string | null;
           timezone?: string;
           updated_at?: string;
+          whatsapp_enabled?: boolean;
         };
         Update: {
           created_at?: string;
@@ -321,6 +415,7 @@ export type Database = {
           name_hi?: string | null;
           timezone?: string;
           updated_at?: string;
+          whatsapp_enabled?: boolean;
         };
         Relationships: [];
       };
@@ -485,6 +580,26 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      apply_whatsapp_status: {
+        Args: { p_at?: string; p_error?: string; p_provider_message_id: string; p_status: string };
+        Returns: boolean;
+      };
+      claim_notification_jobs: {
+        Args: { p_limit?: number };
+        Returns: {
+          attempts: number;
+          attendance_date: string;
+          class_label: string;
+          id: string;
+          recipient_phone: string;
+          student_name: string;
+          template_language: Database["public"]["Enums"]["app_language"];
+        }[];
+      };
+      complete_notification_job: {
+        Args: { p_error?: string; p_job_id: string; p_outcome: string; p_provider_message_id?: string };
+        Returns: undefined;
+      };
       correct_attendance_record: {
         Args: {
           p_reason: string;
@@ -583,6 +698,7 @@ export type Database = {
       attendance_session_status: "draft" | "submitted" | "locked";
       attendance_status: "present" | "absent" | "late" | "excused";
       enrollment_status: "active" | "inactive" | "transferred";
+      notification_status: "queued" | "processing" | "sent" | "delivered" | "read" | "failed" | "cancelled" | "skipped";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -695,6 +811,7 @@ export const Constants = {
       attendance_session_status: ["draft", "submitted", "locked"],
       attendance_status: ["present", "absent", "late", "excused"],
       enrollment_status: ["active", "inactive", "transferred"],
+      notification_status: ["queued", "processing", "sent", "delivered", "read", "failed", "cancelled", "skipped"],
     },
   },
 } as const;
