@@ -7,6 +7,7 @@ import { getStudent, listSectionOptions } from "@/services/students";
 import { updateStudent } from "../actions";
 import { StatusBadge } from "../status-badge";
 import { StudentForm } from "../student-form";
+import { AttendanceHistory } from "./attendance-history";
 
 export const metadata: Metadata = { title: "Student" };
 
@@ -66,6 +67,7 @@ export default async function StudentPage({
             </div>
           ))}
         </dl>
+        <AttendanceHistory studentId={student.id} />
       </div>
     );
   }
@@ -96,6 +98,7 @@ export default async function StudentPage({
         submitLabel="Save changes"
         showStatus
       />
+      <AttendanceHistory studentId={student.id} />
     </div>
   );
 }

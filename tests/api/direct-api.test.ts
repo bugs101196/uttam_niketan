@@ -159,4 +159,86 @@ describe.skipIf(!url)("direct Data API access", () => {
     const { data } = await teacher.from("profiles").select("id");
     expect(data!.map((p) => p.id)).toEqual([teacherId]);
   });
+
+  describe("attendance workflow functions", () => {
+    const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
+    let ownSessionId: string;
+    let otherSessionId: string;
+    let ownStudentId: string;
+
+    beforeAll(async () => {
+      // Opening is idempotent, so these calls only create today's sessions if missing.
+      const { data: assigned } = await teacher.from("teacher_assignments").select("section_id");
+      const own = await teacher.rpc("open_attendance_session", {
+        p_section_id: assigned![0].section_id,
+        p_date: today,
+      });
+      const other = await admin.rpc("open_attendance_session", { p_section_id: class2SectionId, p_date: today });
+      ownSessionId = own.data!.id;
+      otherSessionId = other.data!.id;
+      const { data: students } = await teacher.from("students").select("id").limit(1);
+      ownStudentId = students![0].id;
+    });
+
+    it("shows a teacher only sessions and records from assigned sections", async () => {
+      const { data: assigned } = await teacher.from("teacher_assignments").select("section_id");
+      const allowed = new Set(assigned!.map((a) => a.section_id));
+      const { data: sessions } = await teacher.from("attendance_sessions").select("section_id");
+      expect(sessions!.length).toBeGreaterThan(0);
+      expect(sessions!.every((s) => allowed.has(s.section_id))).toBe(true);
+      const { data: records } = await teacher.from("attendance_records").select("section_id");
+      expect(records!.every((r) => allowed.has(r.section_id))).toBe(true);
+    });
+
+    it("blocks a teacher from saving or submitting another section's attendance", async () => {
+      const save = await teacher.rpc("save_attendance_draft", { p_session_id: otherSessionId, p_records: [] });
+      expect(save.error?.code).toBe("P0002");
+      const submit = await teacher.rpc("submit_attendance_session", { p_session_id: otherSessionId, p_records: [] });
+      expect(submit.error?.code).toBe("P0002");
+    });
+
+    it("blocks a teacher from correcting or locking, even in their own section", async () => {
+      const correct = await teacher.rpc("correct_attendance_record", {
+        p_session_id: ownSessionId,
+        p_student_id: ownStudentId,
+        p_status: "present",
+        p_reason: "trying to bypass the office",
+      });
+      expect(correct.error?.code).toBe("42501");
+      const lock = await teacher.rpc("lock_attendance_session", { p_session_id: ownSessionId });
+      expect(lock.error?.code).toBe("42501");
+    });
+
+    it("blocks a disabled account from every attendance function", async () => {
+      const save = await disabled.rpc("save_attendance_draft", { p_session_id: ownSessionId, p_records: [] });
+      expect(save.error?.code).toBe("P0002");
+      const { data } = await disabled.from("attendance_sessions").select("id");
+      expect(data).toEqual([]);
+    });
+
+    it("rejects a draft that marks a student from another section", async () => {
+      const { data: otherStudents } = await admin
+        .from("students")
+        .select("id")
+        .eq("section_id", class2SectionId)
+        .limit(1);
+      const { error } = await teacher.rpc("save_attendance_draft", {
+        p_session_id: ownSessionId,
+        p_records: [{ student_id: otherStudents![0].id, status: "absent" }],
+      });
+      // 22023 (not in roster) on a draft; 55000 if today's session was already submitted.
+      expect(["22023", "55000"]).toContain(error?.code);
+      const { data: written } = await admin
+        .from("attendance_records")
+        .select("id")
+        .eq("session_id", ownSessionId)
+        .eq("student_id", otherStudents![0].id);
+      expect(written).toEqual([]);
+    });
+
+    it("keeps the audit history hidden from teachers", async () => {
+      const { data } = await teacher.from("audit_logs").select("id");
+      expect(data).toEqual([]);
+    });
+  });
 });
