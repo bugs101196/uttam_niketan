@@ -22,7 +22,7 @@ defect register and decision log when milestones change (see the `ship-feature` 
 
 ## Status (update when it changes)
 
-- **Done:** Week 1 foundation, Week 2 (auth, permissions, students, staff/assignments) on `main`; Week 3 (attendance UI, reports, corrections, lock, history) on branch `week-3-attendance`.
+- **Done:** Weeks 1–3 on `main`: foundation, auth/permissions, students, staff/assignments, attendance (roster, draft/submit, corrections, lock, history) and reports.
 - **Live:** https://uttamniketan.vercel.app (Vercel project `uttam_niketan`, team `aksundram44-9592s-projects`; pushes to `main` deploy to production). Staff login there needs the hosted database set up.
 - **Next:** Week 4 — WhatsApp absence notifications (only if the school's WhatsApp Business setup is ready), full QA, backup/restore rehearsal, production release and handover.
 - **Waiting on the owner:** apply migrations to the hosted Supabase project (Vercel's Supabase integration) and turn off sign-ups there; first real admin via `scripts/create-admin.mjs`.

@@ -70,7 +70,7 @@ The school currently relies on paper records. The app should be practical on low
 - [ ] Week 3 — Attendance workflow, reports, security and regression testing
 - [ ] Week 4 — WhatsApp integration if approved/setup is ready, full QA, deployment and handover
 
-**Current phase:** Week 3 — attendance workflow, reports and corrections built (Days 11–15) on branch `week-3-attendance`; production site live at https://uttamniketan.vercel.app (staff login pending hosted database setup)  
+**Current phase:** Week 3 — attendance workflow, reports and corrections built (Days 11–15) and merged to `main`; production site live at https://uttamniketan.vercel.app (staff login pending hosted database setup)  
 **Target duration:** 4 weeks, approximately 20 working days  
 **Actual start date:** TBD after project scope approval  
 **Target launch date:** TBD based on actual start date and dependencies  
@@ -966,7 +966,7 @@ Append one entry at the end of each week. Do not delete earlier entries.
   - Day 14 — Admin correction per student with a required reason, lock day, and a history panel (submitted / corrected from→to with reason / locked) from the audit log. Teachers see submitted days read-only.
   - Day 15 — Direct Data API attack tests for attendance (other sections, corrections/locks by teachers, disabled users, cross-section students, audit visibility); report reconciliation against SQL counts.
   - No database migration was needed; the Week 1 functions already enforce the rules. Client bundle for the roster page kept at 3.2 kB by keeping Zod out of client code.
-- **Demo / release version:** branch `week-3-attendance`; production still runs `main` (Week 2) until merge.
+- **Demo / release version:** merged to `main` and deployed to https://uttamniketan.vercel.app on 2026-10-26.
 - **Tests passed:** lint, typecheck, production build; 95 automated tests (40 DB, 17 direct Data API, 38 unit). Mutation check: counting excused days in the rate made the unit test fail. Browser (390px): teacher take/save/reload/submit flow, tampered section id refused, teacher 404 on another section's session and on /staff, future date clamped to today, admin correction + history + lock. Report reconciliation: daily per-section counts, daily totals, monthly per-student counts (incl. a draft-only section showing 0 counted days) and student history all match SQL over the saved records, on both dev and production builds.
 - **Open defects:** none.
 - **Decisions made:** see Decision Log (Week 3 entries).
