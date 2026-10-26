@@ -35,9 +35,12 @@ describe("failure classification", () => {
     [401, 190, false, "expired token (fixable)"],
     [400, 131026, true, "undeliverable recipient"],
     [400, 132001, true, "template missing"],
-  ] as [number | null, number | undefined, boolean, string][])("%s / %s -> permanent=%s (%s)", (status, code, permanent) => {
-    expect(isPermanentFailure(status, code)).toBe(permanent);
-  });
+  ] as [number | null, number | undefined, boolean, string][])(
+    "%s / %s -> permanent=%s (%s)",
+    (status, code, permanent) => {
+      expect(isPermanentFailure(status, code)).toBe(permanent);
+    },
+  );
 });
 
 function fakeFetch(status: number, body: unknown): typeof fetch {

@@ -260,6 +260,22 @@ describe.skipIf(!url)("direct Data API access", () => {
       expect(data).toEqual([]);
     });
 
+    it("blocks a teacher from managing classes and academic years", async () => {
+      const { data: years } = await admin.from("academic_years").select("id");
+      const yearId = years![0].id;
+      expect((await teacher.rpc("set_active_academic_year", { p_year_id: yearId })).error?.code).toBe("42501");
+      expect((await teacher.rpc("copy_class_structure", { p_from_year: yearId, p_to_year: yearId })).error?.code).toBe(
+        "42501",
+      );
+      const { data: cls } = await admin.from("classes").select("id, name, school_id").limit(1).single();
+      const insert = await teacher
+        .from("classes")
+        .insert({ school_id: cls!.school_id, academic_year_id: yearId, name: "Hacked class" });
+      expect(insert.error?.code).toBe("42501");
+      const { data: renamed } = await teacher.from("classes").update({ name: "Hacked" }).eq("id", cls!.id).select("id");
+      expect(renamed).toEqual([]);
+    });
+
     it("keeps the audit history hidden from teachers", async () => {
       const { data } = await teacher.from("audit_logs").select("id");
       expect(data).toEqual([]);

@@ -73,6 +73,19 @@ export default async function SettingsPage({
         <p className="text-muted">{school?.name}</p>
       </div>
 
+      <Link
+        href="/settings/classes"
+        className="flex min-h-16 items-center justify-between rounded-xl border border-border bg-surface p-5 hover:bg-accent-soft"
+      >
+        <span>
+          <span className="block text-lg font-bold">Classes &amp; academic year</span>
+          <span className="text-muted">Add or rename classes and sections, start a new academic year</span>
+        </span>
+        <span aria-hidden className="text-2xl text-brand">
+          →
+        </span>
+      </Link>
+
       <section aria-labelledby="messaging" className="rounded-xl border border-border bg-surface p-5">
         <h2 id="messaging" className="text-lg font-bold">
           WhatsApp absence alerts
