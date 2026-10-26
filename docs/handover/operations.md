@@ -31,6 +31,8 @@ Redeploy) for them to take effect.
 
 ## First production setup (one time)
 
+Step-by-step version without a terminal: [`setup-guide.md`](setup-guide.md).
+
 1. Apply the database migrations to the hosted Supabase project (from a checkout of `main`):
    ```bash
    npx supabase login
