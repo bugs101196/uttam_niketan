@@ -29,6 +29,20 @@ defect register and decision log when milestones change (see the `ship-feature` 
 - **Waiting on the owner:** hosted database setup per `docs/handover/setup-guide.md` (4 migrations, school setup SQL, sign-ups off, principal account) and `CRON_SECRET` in Vercel.
 - **Waiting on the school:** content/logo/address, class & section names, attendance correction rules, late/excused usage and the 75% threshold, required student fields, whether teachers need guardian phones, Hindi staff UI, CSV import, email vs phone login for teachers.
 
+## ▶️ Resume here (as of 2026-10-27)
+
+1. Ask whether the owner finished `docs/handover/setup-guide.md` (hosted Supabase: 4 migrations in the SQL
+   Editor, `supabase/setup/01-school.sql`, sign-ups off, principal via Authentication → Users +
+   `02-principal-profile.sql`, `CRON_SECRET` in Vercel + redeploy). Help with any error they paste.
+2. Once set up, verify the live staff flow at https://uttamniketan.vercel.app/login (principal → Staff →
+   teacher → Students → attendance → Reports). Vercel tools can check deployments/runtime errors; the
+   container cannot open `vercel.app` directly (proxy), use `web_fetch_vercel_url`.
+3. Then: year-end promotion change request (move students into next year's sections), school content,
+   WhatsApp go-live checklist, school demo.
+
+Cloud containers restart between sessions: start Docker and local Supabase with the `local-stack` skill
+before running `test:db`/`test:api` or the app.
+
 ## Gotchas learned the hard way
 
 - `sections` has no direct relationship to `academic_years`; filter the active year through `classes!inner(academic_years!inner(is_active))`.
@@ -36,4 +50,6 @@ defect register and decision log when milestones change (see the `ship-feature` 
 - Supabase reports "User is banned" even with a wrong password, so login must keep one generic error message.
 - Run the Docker `pg_dump`/`pg_restore` inside `supabase_db_uttam_niketan` (PG 17); the host has PG 16 tools.
 - In Playwright, scope selectors: header "Sign out" is also a submit button, and headings often sit inside a wrapper `div` (no `h2 + p` sibling).
-- After a successful `useActionState` submit React resets the form; echo `values` + bump `attempt` (form `key`) to keep input on errors.
+- After a successful `useActionState` submit React resets the form; echo `values` + bump `attempt` (form `key`) to keep input on errors (done generically in `settings/classes/inline-form.tsx`).
+- Use `useId()` for input ids in reusable form components; label-derived ids collide when the form repeats on a page.
+- A shell `kill`/`pkill` pattern that also appears in the same command line kills your own shell; stop servers with `ps -eo pid,args | awk '$2 ~ /^next-server/ {print $1}' | xargs -r kill` as its own command.
