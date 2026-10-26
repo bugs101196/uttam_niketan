@@ -24,11 +24,13 @@ export function SiteFooter({ t }: { t: Dictionary }) {
         </nav>
       </div>
       <div className="border-t border-white/15">
-        {/* Staff login link is added with the /login route in Week 2. */}
-        <div className="mx-auto max-w-6xl px-4 py-4 text-sm opacity-80">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-sm opacity-80">
           <p>
             © {new Date().getFullYear()} {t.meta.siteName}. {t.footer.rights}
           </p>
+          <Link href="/login" className="flex min-h-11 items-center hover:underline">
+            {t.nav.staffLogin}
+          </Link>
         </div>
       </div>
     </footer>
