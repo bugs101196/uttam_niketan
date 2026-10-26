@@ -40,6 +40,20 @@ longer be corrected.
 - **Disable account**: when someone leaves. They are signed out on their next click and cannot sign in.
   **Re-enable** restores access.
 
+## Classes and the academic year
+
+**Settings → Classes & academic year**:
+
+- **Add / rename / delete** classes and sections of the current year. A section can only be deleted when
+  it has no students, teachers or attendance; a class only when it has no sections. Nothing with
+  history can be deleted by accident.
+- **Order** decides where a class appears in lists (0 = first).
+- **New academic year**: _Add an academic year_, keep _Copy the classes and sections_ ticked. The new
+  year is **not active** until you press **Make active**.
+- **Before making a new year active**, students must be moved into the new year's classes and teachers
+  assigned to its sections. Until a promotion tool exists, ask the developer to do this step. If you
+  switch too early, switch back to the previous year: nothing is lost.
+
 ## WhatsApp absence alerts
 
 **Settings → WhatsApp absence alerts**. Alerts stay off until the school's WhatsApp Business setup is

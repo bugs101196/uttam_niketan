@@ -1,4 +1,5 @@
 # Uttam Niketan — Website & School Management App
+
 ## Project Roadmap and Persistent Project Context
 
 > **Purpose of this file:** Use this document as the durable project roadmap and shared context for Claude while planning, implementing, testing, and maintaining the Uttam Niketan School Website and School Management App.
@@ -78,22 +79,22 @@ The school currently relies on paper records. The app should be practical on low
 
 ### Decisions already agreed
 
-| Decision | Agreed direction |
-|---|---|
-| Project purpose | Paid client project for Uttam Niketan |
-| Platform | Responsive web app / installable PWA; do not build native Android first |
-| Framework | Next.js App Router + TypeScript |
-| Styling | Tailwind CSS and reusable accessible UI components |
-| Database | Supabase PostgreSQL |
-| Authentication | Supabase Auth |
-| Deployment | Vercel, source controlled in GitHub |
-| Initial app users | Principal/admin and teachers |
-| MVP app features | Student records, class/section setup, teacher assignments, attendance and basic reports |
-| Notification strategy | Build WhatsApp after the attendance workflow is reliable |
-| Language | Public website should support English and Hindi |
-| Security baseline | Server-side authorization plus RLS; do not rely on hidden buttons or frontend-only checks |
-| Release method | Weekly preview/demo, QA, defect fixing, and acceptance gates |
-| MVP exclusions | Fees, exams/report cards, homework, payroll, transport, full parent portal and native Android app unless separately approved |
+| Decision              | Agreed direction                                                                                                             |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Project purpose       | Paid client project for Uttam Niketan                                                                                        |
+| Platform              | Responsive web app / installable PWA; do not build native Android first                                                      |
+| Framework             | Next.js App Router + TypeScript                                                                                              |
+| Styling               | Tailwind CSS and reusable accessible UI components                                                                           |
+| Database              | Supabase PostgreSQL                                                                                                          |
+| Authentication        | Supabase Auth                                                                                                                |
+| Deployment            | Vercel, source controlled in GitHub                                                                                          |
+| Initial app users     | Principal/admin and teachers                                                                                                 |
+| MVP app features      | Student records, class/section setup, teacher assignments, attendance and basic reports                                      |
+| Notification strategy | Build WhatsApp after the attendance workflow is reliable                                                                     |
+| Language              | Public website should support English and Hindi                                                                              |
+| Security baseline     | Server-side authorization plus RLS; do not rely on hidden buttons or frontend-only checks                                    |
+| Release method        | Weekly preview/demo, QA, defect fixing, and acceptance gates                                                                 |
+| MVP exclusions        | Fees, exams/report cards, homework, payroll, transport, full parent portal and native Android app unless separately approved |
 
 ### Items requiring confirmation from the school
 
@@ -177,20 +178,20 @@ If Meta account readiness, business verification or template approval is delayed
 
 ### Proposed stack
 
-| Layer | Technology | Responsibility |
-|---|---|---|
-| Frontend | Next.js App Router, TypeScript | Public pages and authenticated application |
-| UI | Tailwind CSS, reusable component library | Responsive consistent design |
-| Backend | Next.js Route Handlers and server-side services | Business logic, validation, authorization |
-| Database | Supabase PostgreSQL | Durable structured data and constraints |
-| Identity | Supabase Auth | User identity and sessions |
-| Data access protection | PostgreSQL RLS and server authorization | Data access boundaries |
-| File storage | Supabase Storage if needed | Approved school assets; avoid unnecessary student files |
-| Deployment | Vercel | Preview and production deployments |
-| Version control | GitHub | Branches, pull requests and history |
-| Validation | Zod plus database constraints | Request and form validation |
-| Messaging | Official WhatsApp Business Platform | Later parent notifications |
-| PWA | Web manifest and app icons | Installable browser app |
+| Layer                  | Technology                                      | Responsibility                                          |
+| ---------------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| Frontend               | Next.js App Router, TypeScript                  | Public pages and authenticated application              |
+| UI                     | Tailwind CSS, reusable component library        | Responsive consistent design                            |
+| Backend                | Next.js Route Handlers and server-side services | Business logic, validation, authorization               |
+| Database               | Supabase PostgreSQL                             | Durable structured data and constraints                 |
+| Identity               | Supabase Auth                                   | User identity and sessions                              |
+| Data access protection | PostgreSQL RLS and server authorization         | Data access boundaries                                  |
+| File storage           | Supabase Storage if needed                      | Approved school assets; avoid unnecessary student files |
+| Deployment             | Vercel                                          | Preview and production deployments                      |
+| Version control        | GitHub                                          | Branches, pull requests and history                     |
+| Validation             | Zod plus database constraints                   | Request and form validation                             |
+| Messaging              | Official WhatsApp Business Platform             | Later parent notifications                              |
+| PWA                    | Web manifest and app icons                      | Installable browser app                                 |
 
 ### Architecture principles
 
@@ -263,19 +264,19 @@ Use UUID primary keys, foreign keys, timestamps with time zones where appropriat
 
 ### Core tables
 
-| Table | Purpose / key fields |
-|---|---|
-| `schools` | `id`, `name`, `timezone` default `Asia/Kolkata`, `default_language`, timestamps |
-| `profiles` | Auth user ID, `school_id`, `full_name`, `role` (`admin` or `teacher`), `is_active` |
-| `academic_years` | `id`, `school_id`, name, start/end dates, active flag |
-| `classes` | `id`, `school_id`, `academic_year_id`, name, sort order |
-| `sections` | `id`, `class_id`, section name |
-| `students` | `id`, `school_id`, `admission_no`, full name, class/section, roll number, guardian name/phone, preferred language, enrollment status |
-| `teacher_assignments` | `teacher_id`, `section_id`, `academic_year_id` |
-| `attendance_sessions` | `id`, `section_id`, `attendance_date`, status, submitted by/time |
-| `attendance_records` | `session_id`, `student_id`, attendance status, marked by/time, updated time |
-| `audit_logs` | actor, school, action, entity type/ID, timestamp; avoid secrets and excessive personal data |
-| `notification_jobs` | attendance record reference, recipient, template language, status, retry count, provider message ID, error and delivery timestamps |
+| Table                 | Purpose / key fields                                                                                                                 |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `schools`             | `id`, `name`, `timezone` default `Asia/Kolkata`, `default_language`, timestamps                                                      |
+| `profiles`            | Auth user ID, `school_id`, `full_name`, `role` (`admin` or `teacher`), `is_active`                                                   |
+| `academic_years`      | `id`, `school_id`, name, start/end dates, active flag                                                                                |
+| `classes`             | `id`, `school_id`, `academic_year_id`, name, sort order                                                                              |
+| `sections`            | `id`, `class_id`, section name                                                                                                       |
+| `students`            | `id`, `school_id`, `admission_no`, full name, class/section, roll number, guardian name/phone, preferred language, enrollment status |
+| `teacher_assignments` | `teacher_id`, `section_id`, `academic_year_id`                                                                                       |
+| `attendance_sessions` | `id`, `section_id`, `attendance_date`, status, submitted by/time                                                                     |
+| `attendance_records`  | `session_id`, `student_id`, attendance status, marked by/time, updated time                                                          |
+| `audit_logs`          | actor, school, action, entity type/ID, timestamp; avoid secrets and excessive personal data                                          |
+| `notification_jobs`   | attendance record reference, recipient, template language, status, retry count, provider message ID, error and delivery timestamps   |
 
 ### Important constraints and integrity rules
 
@@ -384,21 +385,21 @@ Use Next.js Route Handlers, server actions or server-side service functions as a
 
 Suggested operations:
 
-| Method | Route / operation | Purpose |
-|---|---|---|
-| `GET` | `/api/students` | Search/filter students |
-| `POST` | `/api/students` | Create a student |
-| `GET` | `/api/students/:id` | Read student details |
-| `PATCH` | `/api/students/:id` | Update a student |
-| `POST` | `/api/students/import` | Validate/import CSV if in scope |
-| `GET` | `/api/classes` | List allowed classes and sections |
-| `GET` | `/api/attendance?sectionId=...&date=...` | Load attendance roster |
-| `POST` | `/api/attendance/sessions` | Create or retrieve a session idempotently |
-| `PUT` | `/api/attendance/sessions/:id/records` | Save a draft safely |
-| `POST` | `/api/attendance/sessions/:id/submit` | Validate and submit transactionally |
-| `GET` | `/api/reports/attendance` | Authorized reports |
-| `GET` | `/api/notifications` | Admin notification logs when messaging is enabled |
-| `POST` | `/api/webhooks/whatsapp` | Verified provider callback when messaging is enabled |
+| Method  | Route / operation                        | Purpose                                              |
+| ------- | ---------------------------------------- | ---------------------------------------------------- |
+| `GET`   | `/api/students`                          | Search/filter students                               |
+| `POST`  | `/api/students`                          | Create a student                                     |
+| `GET`   | `/api/students/:id`                      | Read student details                                 |
+| `PATCH` | `/api/students/:id`                      | Update a student                                     |
+| `POST`  | `/api/students/import`                   | Validate/import CSV if in scope                      |
+| `GET`   | `/api/classes`                           | List allowed classes and sections                    |
+| `GET`   | `/api/attendance?sectionId=...&date=...` | Load attendance roster                               |
+| `POST`  | `/api/attendance/sessions`               | Create or retrieve a session idempotently            |
+| `PUT`   | `/api/attendance/sessions/:id/records`   | Save a draft safely                                  |
+| `POST`  | `/api/attendance/sessions/:id/submit`    | Validate and submit transactionally                  |
+| `GET`   | `/api/reports/attendance`                | Authorized reports                                   |
+| `GET`   | `/api/notifications`                     | Admin notification logs when messaging is enabled    |
+| `POST`  | `/api/webhooks/whatsapp`                 | Verified provider callback when messaging is enabled |
 
 ### API standards
 
@@ -423,6 +424,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 **Goal:** Approve the scope and establish the base repository, website design system and database foundation.
 
 ### Day 1 — Discovery and requirements
+
 - Confirm features, users, school roles, languages, class/section structure, attendance rules and MVP exclusions.
 - Confirm required student fields and guardian contact handling.
 - Create acceptance criteria and identify school-provided dependencies.
@@ -431,6 +433,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 **Output:** Approved scope and requirements baseline.
 
 ### Day 2 — Sitemap and UX design
+
 - Define public page structure and navigation.
 - Wireframe the public website, login, dashboard, student list and attendance flow.
 - Define colors, typography, spacing, reusable components and English/Hindi behavior.
@@ -439,6 +442,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 **Output:** Approved wireframes and UI foundations.
 
 ### Day 3 — Repository and environment
+
 - Set up Next.js + TypeScript + Tailwind.
 - Configure linting and type checking.
 - Create GitHub repository and branch conventions.
@@ -448,6 +452,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 **Output:** App runs locally and has a working preview deployment.
 
 ### Day 4 — Database schema and migration
+
 - Create migrations for schools, academic years, profiles, classes, sections, students, assignments and attendance.
 - Add foreign keys, uniqueness constraints, indexes and status checks.
 - Start RLS design and seed fictional test data.
@@ -456,12 +461,14 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 **Output:** Repeatable database migration and schema baseline.
 
 ### Day 5 — Public shell and Week 1 review
+
 - Build shared public header/footer, navigation, language switch and homepage shell.
 - Confirm mobile/tablet/desktop behavior.
 - Demo the current website shell and schema.
 - Record issues and fix blockers before Week 2.
 
 **Week 1 test gate**
+
 - [ ] Approved requirements and wireframes
 - [ ] Local and preview environments run
 - [ ] Initial database migration applies cleanly
@@ -478,12 +485,14 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 **Goal:** Complete the main public pages and implement secure access plus student management.
 
 ### Day 6 — Website content pages
+
 - Build About, Academics, Admissions, Notices, Gallery and Contact pages.
 - Add page titles, descriptions, image alt text and basic SEO metadata.
 - Clearly label any temporary placeholder content.
 - Ensure the English/Hindi content model remains consistent.
 
 ### Day 7 — Authentication foundation
+
 - Configure Supabase SSR/browser clients appropriately.
 - Implement login/logout and safe session handling.
 - Protect dashboard routes and redirect unauthenticated users.
@@ -491,24 +500,28 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 - Handle disabled/inactive profiles.
 
 ### Day 8 — Permissions and RLS
+
 - Enable RLS on the relevant tables.
 - Implement policies for admins and teachers.
 - Build server-side authorization helpers for role, active profile, school and teacher assignment.
 - Test direct API requests and route manipulation, not just UI visibility.
 
 ### Day 9 — Student management
+
 - Build list/search/filter/add/edit/detail pages.
 - Validate admission number uniqueness and required fields.
 - Validate class/section consistency and guardian contact formatting.
 - Provide clear form error and success states.
 
 ### Day 10 — Assignments, import and Week 2 review
+
 - Implement teacher-to-section assignment management.
 - Implement CSV import validation if in the accepted scope.
 - Add a helpful import error report without exposing unnecessary personal data.
 - Complete regression tests and demo the release.
 
 **Week 2 test gate**
+
 - [ ] Public pages and language switch work
 - [ ] Login/logout and protected routes work
 - [ ] Admin can create, search and update test students
@@ -527,12 +540,14 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 **Goal:** Deliver a reliable class-wise attendance flow and verify data integrity.
 
 ### Day 11 — Attendance roster UI
+
 - Add class, section and date selectors.
 - Load the active roster for the chosen section.
 - Build Present/Absent controls, mark-all-present, and absent highlighting.
 - Add loading, error, empty and unsaved-change handling.
 
 ### Day 12 — Draft and submit backend
+
 - Implement session create/retrieve behavior.
 - Implement draft saving and roster validation.
 - Build transactional submission logic using a database transaction or PostgreSQL function.
@@ -541,24 +556,28 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 - Prevent duplicate submissions and accidental duplicate jobs.
 
 ### Day 13 — History and reports
+
 - Build daily and monthly summaries.
 - Add student-wise history and class/section/date filters.
 - Add CSV export if confirmed in scope.
 - Ensure summary counts are computed from persisted database records.
 
 ### Day 14 — Correction workflow and security tests
+
 - Implement submitted-session edit restrictions.
 - Add admin correction/override logic and audit logging.
 - Test unauthorized section IDs, invalid dates, roster changes and race/retry behavior.
 - Validate timezone handling for attendance dates.
 
 ### Day 15 — Week 3 review and regression
+
 - Fix P0/P1 defects.
 - Run the complete attendance and permissions regression suite.
 - Demo to the school and gather teacher feedback.
 - Obtain attendance workflow acceptance or document blocking defects.
 
 **Week 3 test gate**
+
 - [ ] Correct roster loads for selected section and date
 - [ ] Draft save works
 - [ ] Submitted records are complete and consistent
@@ -578,6 +597,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 **Goal:** Add notification infrastructure if external dependencies allow, then complete regression, production setup and staff handover.
 
 ### Day 16 — WhatsApp readiness and configuration
+
 - Confirm the school's WhatsApp Business Platform ownership and access.
 - Review consent/eligibility and privacy requirements.
 - Prepare English and Hindi template content and provider configuration.
@@ -585,6 +605,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 - Use test recipients while validating the integration.
 
 ### Day 17 — Notification queue and worker
+
 - Create notification job schema and deduplication key.
 - Queue one job for each eligible absence after a successfully submitted session.
 - Implement bounded worker processing and retry/backoff rules.
@@ -592,6 +613,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 - Keep tokens and phone-number IDs server-side.
 
 ### Day 18 — Webhook and notification logs
+
 - Verify webhook requests according to provider requirements.
 - Update notification status from provider events.
 - Handle repeated and out-of-order events safely.
@@ -599,6 +621,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 - Test Hindi/English template parameter ordering and invalid phone handling.
 
 ### Day 19 — End-to-end QA and production readiness
+
 - Run complete website, student, login, permissions, attendance and messaging test suites.
 - Test common mobile viewport sizes and devices available to the school.
 - Check accessibility basics and broken links.
@@ -607,6 +630,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 - Resolve critical/high defects; document any accepted known issues.
 
 ### Day 20 — Production release and handover
+
 - Deploy the approved production version.
 - Verify domain, HTTPS, environment variables and logs.
 - Train principal/admin and selected teachers.
@@ -615,6 +639,7 @@ Assume approximately 20 working days. The actual calendar dates should be set af
 - Obtain final acceptance and document any remaining dependencies.
 
 **Week 4 test gate**
+
 - [ ] Core end-to-end regression passes
 - [ ] P0/P1 defects are closed
 - [ ] Production environment and secrets are reviewed
@@ -659,19 +684,19 @@ Every week follows this cycle:
 
 Keep a defect register with these fields:
 
-| Field | Description |
-|---|---|
-| Defect ID | Unique ID, e.g. `BUG-001` |
-| Title | Short description |
-| Environment | Local, preview/staging, production |
-| Steps to reproduce | Exact steps |
-| Expected result | Correct behavior |
-| Actual result | Observed behavior |
-| Severity | P0, P1, P2 or P3 |
-| Owner | Person responsible |
-| Status | Open, In Progress, Fixed, Retest, Closed, Deferred |
-| Fix version | Release where the fix is included |
-| Retest evidence | Test result and date |
+| Field              | Description                                        |
+| ------------------ | -------------------------------------------------- |
+| Defect ID          | Unique ID, e.g. `BUG-001`                          |
+| Title              | Short description                                  |
+| Environment        | Local, preview/staging, production                 |
+| Steps to reproduce | Exact steps                                        |
+| Expected result    | Correct behavior                                   |
+| Actual result      | Observed behavior                                  |
+| Severity           | P0, P1, P2 or P3                                   |
+| Owner              | Person responsible                                 |
+| Status             | Open, In Progress, Fixed, Retest, Closed, Deferred |
+| Fix version        | Release where the fix is included                  |
+| Retest evidence    | Test result and date                               |
 
 ### Severity definitions
 
@@ -681,6 +706,7 @@ Keep a defect register with these fields:
 - **P3 — Low:** minor visual/copy/usability issue. May be scheduled for a later patch with approval.
 
 After any fix:
+
 1. Reproduce the original issue.
 2. Apply the fix.
 3. Run the targeted test.
@@ -692,6 +718,7 @@ After any fix:
 ## 13. Testing Strategy
 
 ### Website tests
+
 - All navigation and footer links.
 - English/Hindi language selection and fallback.
 - Mobile navigation, forms and responsive layouts.
@@ -700,6 +727,7 @@ After any fix:
 - No private student or guardian data appears in public routes or page metadata.
 
 ### Authentication / permission tests
+
 - Valid and invalid login.
 - Logout and expired session.
 - Password reset as configured.
@@ -710,6 +738,7 @@ After any fix:
 - Direct data API access is denied if policies do not permit it.
 
 ### Student-data tests
+
 - Create/edit/detail/search works.
 - Duplicate admission number is rejected.
 - Required fields are validated on server and database.
@@ -718,6 +747,7 @@ After any fix:
 - Inactive/transferred students are handled correctly.
 
 ### Attendance tests
+
 - Correct active roster loads.
 - Draft can be saved and reopened.
 - Every active student in the session has a valid status before submission, according to school policy.
@@ -729,6 +759,7 @@ After any fix:
 - Timezone/date boundaries behave correctly.
 
 ### WhatsApp tests
+
 - Only eligible absent records create jobs.
 - One job per deduplication key.
 - Invalid phone number is rejected or marked failed.
@@ -740,6 +771,7 @@ After any fix:
 - No real parent message is sent without school approval.
 
 ### Production/recovery tests
+
 - Production environment variables are present and private.
 - HTTPS and domain configuration work.
 - Logs do not contain tokens or unnecessary student details.
@@ -773,23 +805,28 @@ After any fix:
 Use only the official WhatsApp Business Platform / Cloud API or an authorized provider. Do not automate consumer WhatsApp Web.
 
 ### Trigger
+
 - Notification is eligible only after the attendance session is successfully submitted.
 - Generate jobs only for students marked absent, and only if recipient eligibility and guardian notification rules are satisfied.
 
 ### Example English template draft
+
 > Dear Parent/Guardian, your child {{1}} of Class {{2}} was marked absent at Uttam Niketan School on {{3}}. If you believe this is incorrect, please contact the school office.
 
 ### Example Hindi template draft
+
 > प्रिय अभिभावक, आपके बच्चे {{1}} (कक्षा {{2}}) को दिनांक {{3}} को उत्तम निकेतन विद्यालय में अनुपस्थित दर्ज किया गया है। यदि यह जानकारी गलत है, तो कृपया विद्यालय कार्यालय से संपर्क करें।
 
 These are draft messages only. They must be reviewed by the school and submitted through the provider's template approval process before use as approved templates.
 
 ### Notification states
+
 Use a controlled state model such as:
 `queued → processing → sent → delivered → read`
 with failure paths recorded as `failed`. Not every message/provider will report every state.
 
 ### Required safeguards
+
 - Store and validate guardian phone numbers with the correct country code.
 - Record guardian notification eligibility/consent according to the school's approved process.
 - Use an idempotency/deduplication key.
@@ -804,31 +841,32 @@ with failure paths recorded as `failed`. Not every message/provider will report 
 
 ## 16. Risks and Mitigations
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| School content or photos delayed | Website content approval delayed | Assign one school content approver; use clearly labelled placeholders during development |
-| Inconsistent paper student records | Import errors and incorrect records | Clean/sample/validate the CSV; school verifies data accuracy |
-| Scope increases during development | Four-week timeline becomes unrealistic | Use a change request and prioritize MVP |
-| Meta account/template approval delayed | Live messaging unavailable at launch | Start setup early; test using allowed test assets; launch core attendance independently |
-| Weak internet or low-end phones | Attendance entry disrupted | Optimize UI, show save state, retry safely; do not promise offline sync unless built/tested |
-| Authorization/RLS flaw | Exposure of student or guardian data | Test RLS and server checks before launch; block production on critical defects |
-| Inaccurate attendance | Incorrect operations and parent alerts | Require explicit submission, transactions, idempotency, correction audit and roster reconciliation |
-| Developer-managed hosting unclear | Unplanned costs or access disputes | Document account ownership, recurring fees, support and handover terms |
-| Client feedback is late | Weekly approvals slip | Set a named approver and clear response windows at kick-off |
+| Risk                                   | Impact                                 | Mitigation                                                                                         |
+| -------------------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| School content or photos delayed       | Website content approval delayed       | Assign one school content approver; use clearly labelled placeholders during development           |
+| Inconsistent paper student records     | Import errors and incorrect records    | Clean/sample/validate the CSV; school verifies data accuracy                                       |
+| Scope increases during development     | Four-week timeline becomes unrealistic | Use a change request and prioritize MVP                                                            |
+| Meta account/template approval delayed | Live messaging unavailable at launch   | Start setup early; test using allowed test assets; launch core attendance independently            |
+| Weak internet or low-end phones        | Attendance entry disrupted             | Optimize UI, show save state, retry safely; do not promise offline sync unless built/tested        |
+| Authorization/RLS flaw                 | Exposure of student or guardian data   | Test RLS and server checks before launch; block production on critical defects                     |
+| Inaccurate attendance                  | Incorrect operations and parent alerts | Require explicit submission, transactions, idempotency, correction audit and roster reconciliation |
+| Developer-managed hosting unclear      | Unplanned costs or access disputes     | Document account ownership, recurring fees, support and handover terms                             |
+| Client feedback is late                | Weekly approvals slip                  | Set a named approver and clear response windows at kick-off                                        |
 
 ---
 
 ## 17. Roles and Governance
 
-| Role | Responsibilities |
-|---|---|
-| Developer / project owner | Build, test, deploy, maintain repository, document decisions, track defects and perform handover |
-| Principal / client approver | Approve scope, public content, rules, weekly releases and go-live |
-| School data coordinator | Prepare and verify student/guardian data before import |
-| Pilot teachers | Test roster and attendance workflows and report usability issues |
-| Authorized WhatsApp business owner | Own business assets, authorize messaging, handle templates and billing decisions |
+| Role                               | Responsibilities                                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Developer / project owner          | Build, test, deploy, maintain repository, document decisions, track defects and perform handover |
+| Principal / client approver        | Approve scope, public content, rules, weekly releases and go-live                                |
+| School data coordinator            | Prepare and verify student/guardian data before import                                           |
+| Pilot teachers                     | Test roster and attendance workflows and report usability issues                                 |
+| Authorized WhatsApp business owner | Own business assets, authorize messaging, handle templates and billing decisions                 |
 
 ### Communication cadence
+
 - Short daily developer task review.
 - Weekly client demo and written sign-off.
 - Defect review at least twice weekly during Weeks 2–4.
@@ -879,6 +917,7 @@ A coded but untested feature is **not Done**.
 Update these checkboxes as work progresses.
 
 ### Week 1 — Foundation
+
 - [ ] Scope confirmed
 - [ ] School content and class structure collected
 - [ ] Design/wireframes approved
@@ -890,6 +929,7 @@ Update these checkboxes as work progresses.
 - [ ] Week 1 release approved
 
 ### Week 2 — Website, auth and students
+
 - [ ] All public pages implemented
 - [ ] English/Hindi support verified
 - [x] Auth and protected routes implemented
@@ -900,6 +940,7 @@ Update these checkboxes as work progresses.
 - [ ] Week 2 release approved
 
 ### Week 3 — Attendance
+
 - [x] Attendance roster implemented
 - [x] Draft save implemented
 - [x] Transactional submission implemented
@@ -910,6 +951,7 @@ Update these checkboxes as work progresses.
 - [ ] Week 3 release approved
 
 ### Week 4 — Integration and launch
+
 - [ ] WhatsApp readiness confirmed
 - [ ] Template approval/test setup complete if available
 - [x] Notification queue and retries tested
@@ -929,6 +971,7 @@ Update these checkboxes as work progresses.
 Append one entry at the end of each week. Do not delete earlier entries.
 
 ### Week 1
+
 - **Dates:** started 2026-10-26
 - **Completed:**
   - Next.js 15 + TypeScript (strict) + Tailwind 4 scaffold, ESLint, Prettier, Vitest; `.env.example`; `npm run check`.
@@ -944,6 +987,7 @@ Append one entry at the end of each week. Do not delete earlier entries.
 - **Approval status:** pending school review of requirements and wireframes
 
 ### Week 2
+
 - **Dates:** 2026-10-26 (started early, alongside Week 1 sign-off)
 - **Completed:**
   - Day 7 — Supabase SSR auth: email/password login, logout, middleware session refresh and redirect, protected staff routes, safe `?next=` handling, disabled-account sign-out, no public sign-up, `scripts/create-admin.mjs` for the first admin.
@@ -959,6 +1003,7 @@ Append one entry at the end of each week. Do not delete earlier entries.
 - **Approval status:** pending school demo
 
 ### Week 3
+
 - **Dates:** 2026-10-26
 - **Completed:**
   - Day 11–12 — `/attendance`: date picker (school timezone, no future dates) with per-section status (not taken / draft / submitted / locked); "Take attendance" opens the session idempotently. `/attendance/[id]`: phone-first roster with P/A/L/E buttons, absent rows highlighted, "mark unmarked as present", live counts, save draft, submit with a confirmation summary (disabled until every student is marked), unsaved-changes warning. All writes go through the existing database functions.
@@ -974,6 +1019,7 @@ Append one entry at the end of each week. Do not delete earlier entries.
 - **Approval status:** pending school demo with pilot teachers.
 
 ### Week 4
+
 - **Dates:** 2026-10-26
 - **Completed:**
   - Day 16–17 — Migration `20261026000300`: `notification_jobs` queue (dedupe key per session+student, bounded attempts, exponential backoff, 2-day expiry, stale-claim recovery), school-level `whatsapp_enabled` switch, alerts queued atomically on submit and corrections (cancelled if corrected before sending). Worker/webhook functions granted to the service role only; admins can read the log.
@@ -992,12 +1038,14 @@ Append one entry at the end of each week. Do not delete earlier entries.
 
 Add one row per issue. Do not include real student details or secrets.
 
-| ID | Title | Priority | Environment | Status | Owner | Fix version / retest |
-|---|---|---|---|---|---|---|
-| BUG-001 | /students returned 500: active-year filter joined sections→academic_years directly (no such relationship) | P1 | Local | Closed | Developer | Fixed on week-2 branch; browser retest passed 2026-10-26 |
-| BUG-003 | `npm run gen:types` called an uninstalled `supabase` binary and the shell redirect emptied `src/types/database.ts` before failing | P2 | Local | Closed | Developer | Script now uses `npx supabase@2`, writes to a temp file and replaces only on success; regenerated types verified 2026-10-26 |
-| BUG-004 | Staff header logo link had no accessible name on phones (axe `link-name`, serious) | P2 | Local | Closed | Developer | Text kept for screen readers; axe re-run: 0 violations 2026-10-26 |
-| BUG-002 | Local Supabase config disabled email login entirely when turning off sign-ups | P1 | Local | Closed | Developer | Fixed in supabase/config.toml; login + blocked sign-up verified 2026-10-26 |
+| ID      | Title                                                                                                                             | Priority | Environment | Status | Owner     | Fix version / retest                                                                                                        |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- | ------ | --------- | --------------------------------------------------------------------------------------------------------------------------- |
+| BUG-001 | /students returned 500: active-year filter joined sections→academic_years directly (no such relationship)                         | P1       | Local       | Closed | Developer | Fixed on week-2 branch; browser retest passed 2026-10-26                                                                    |
+| BUG-003 | `npm run gen:types` called an uninstalled `supabase` binary and the shell redirect emptied `src/types/database.ts` before failing | P2       | Local       | Closed | Developer | Script now uses `npx supabase@2`, writes to a temp file and replaces only on success; regenerated types verified 2026-10-26 |
+| BUG-004 | Staff header logo link had no accessible name on phones (axe `link-name`, serious)                                                | P2       | Local       | Closed | Developer | Text kept for screen readers; axe re-run: 0 violations 2026-10-26                                                           |
+| BUG-005 | New inline admin forms cleared everything typed when validation failed (e.g. a wrong end date wiped the year name)                | P2       | Local       | Closed | Developer | Form keeps values after an error and clears after success; browser retest 2026-10-27                                        |
+| BUG-006 | Classes/sections/academic-year management screens missing from Week 2 delivery (roadmap §4.2)                                     | P2       | —           | Closed | Developer | Built 2026-10-27; 11 DB, 3 unit, 1 API tests; browser and axe checks                                                        |
+| BUG-002 | Local Supabase config disabled email login entirely when turning off sign-ups                                                     | P1       | Local       | Closed | Developer | Fixed in supabase/config.toml; login + blocked sign-up verified 2026-10-26                                                  |
 
 ---
 
@@ -1005,32 +1053,34 @@ Add one row per issue. Do not include real student details or secrets.
 
 Record significant decisions and why they were made.
 
-| Date | Decision | Reason / impact | Approved by |
-|---|---|---|---|
-| YYYY-MM-DD | Use responsive web app/PWA rather than native Android for MVP | Faster delivery and one codebase for desktop/mobile | Project baseline |
-| YYYY-MM-DD | Deliver attendance before live WhatsApp messaging | Core school workflow remains useful if external messaging approval is delayed | Project baseline |
-| 2026-10-26 | Attendance is written only through security-definer database functions; clients have read-only access to attendance tables | Keeps roster validation, idempotent submit and auditing in one transactional place that cannot be bypassed through the API | Developer (technical) |
-| 2026-10-26 | Provisional correction policy: teachers edit drafts only; after submission only an admin can correct, with a mandatory reason, until the session is locked | Safe default until the school confirms its correction rules (§3) | Pending school confirmation |
-| 2026-10-26 | Teachers' access is limited to sections assigned in the active academic year; deactivated profiles lose all access immediately | Matches §7; prevents stale access after year change or staff departure | Developer (technical) |
-| 2026-10-26 | Public site language is chosen with a cookie-based switch on the same URLs (default English) | Simple, works without JavaScript and keeps the agreed routes. Trade-off: Hindi pages are not separately indexed by search engines; can move to /hi/ URLs later if SEO for Hindi matters | Pending school confirmation of default language |
-| 2026-10-26 | Notification queue table deferred to the Week 4 migration | Keeps Week 1–3 focused on the core; submit function already records absent counts for the audit trail | Developer (technical) |
-| 2026-10-26 | Guardian phone stored in E.164 format; guardian notification consent stored per student (default false) | Required for WhatsApp later; consent defaults to no messaging | Developer (technical) |
-| 2026-10-26 | Provisional class list: Nursery, LKG, UKG, Class 1–8, one section "A" each (seed only) | Placeholder until the school confirms class/section naming | Pending school confirmation |
-| 2026-10-26 | Staff sign in with email + password; accounts created only by an admin (temporary password shown once); no public sign-up | Matches "no public self-registration"; works without an email service. Phone/OTP login can be added later if teachers lack email | Pending school confirmation |
-| 2026-10-26 | Disabling a staff account sets `is_active = false` and bans the Auth user | App and RLS deny disabled profiles on every request; the ban also stops sign-in and token refresh | Developer (technical) |
-| 2026-10-26 | Login shows one error for unknown email, wrong password and disabled account | Supabase reveals bans even with a wrong password, so a specific message would expose which emails are disabled accounts | Developer (security) |
-| 2026-10-26 | Teachers see students in their sections but the teacher UI hides guardian contact details | Data minimisation. RLS still allows teachers to read those columns via the API; a column-level restriction (view or column grants) is a candidate hardening task | Pending school confirmation of what teachers need |
-| 2026-10-26 | Staff app is English-only for the MVP; the public website stays bilingual | Keeps Week 2–3 focused on the core workflow; Hindi staff UI would be a change request if teachers need it | Pending school confirmation |
-| 2026-10-26 | Attendance statuses Present / Absent / Late / Excused; attendance rate = (present + late) ÷ (present + late + absent), excused excluded; under 75% highlighted | Common school practice; makes "late" count as attended | Pending school confirmation |
-| 2026-10-26 | Only submitted or locked days count in reports; drafts are shown as "not counted", never as absences | Roadmap attendance invariant 1 | Developer (technical) |
-| 2026-10-26 | Error details are passed to pages as fixed keys, never as text in the URL | Prevents crafted links from showing arbitrary wording on school pages | Developer (security) |
-| 2026-10-26 | Production site public at uttamniketan.vercel.app; Vercel Authentication kept on preview deployments only | A public school website must not require a Vercel login; previews stay private | Project owner (deployment requested) |
-| 2026-10-26 | WhatsApp alerts ship switched off: school switch (Settings) AND server `WHATSAPP_MODE` (off/test/live) must both allow sending; test mode only reaches allow-listed numbers | No real parent messages without school authorization and Meta approval (roadmap §4.3, §15) | Developer (safety) |
-| 2026-10-26 | Alerts for absences older than 2 days are skipped, not sent | Prevents a backlog of stale alerts when messaging is switched on later | Pending school confirmation |
-| 2026-10-26 | Alerts only for Absent (not Late/Excused) and only with recorded guardian consent and phone | Data minimisation and consent | Pending school confirmation |
-| 2026-10-26 | Template body variables: {{1}} name, {{2}} full class label ("Class 3 – A"), {{3}} DD-MM-YYYY; template wording should use "of {{2}}" | Avoids "Class Class 3 – A" | Pending school review of template text |
-| 2026-10-26 | Backups: weekly manual `supabase db dump` (roles/schema/data) plus before every migration, stored privately outside GitHub; consider Supabase Pro for automatic backups | Free plan has no downloadable backups | Pending owner/school decision |
-| 2026-10-26 | CSV student import not built yet | Roadmap marks it "if in accepted scope"; not yet confirmed | Pending school confirmation |
+| Date       | Decision                                                                                                                                                                                                                  | Reason / impact                                                                                                                                                                         | Approved by                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| YYYY-MM-DD | Use responsive web app/PWA rather than native Android for MVP                                                                                                                                                             | Faster delivery and one codebase for desktop/mobile                                                                                                                                     | Project baseline                                  |
+| YYYY-MM-DD | Deliver attendance before live WhatsApp messaging                                                                                                                                                                         | Core school workflow remains useful if external messaging approval is delayed                                                                                                           | Project baseline                                  |
+| 2026-10-26 | Attendance is written only through security-definer database functions; clients have read-only access to attendance tables                                                                                                | Keeps roster validation, idempotent submit and auditing in one transactional place that cannot be bypassed through the API                                                              | Developer (technical)                             |
+| 2026-10-26 | Provisional correction policy: teachers edit drafts only; after submission only an admin can correct, with a mandatory reason, until the session is locked                                                                | Safe default until the school confirms its correction rules (§3)                                                                                                                        | Pending school confirmation                       |
+| 2026-10-26 | Teachers' access is limited to sections assigned in the active academic year; deactivated profiles lose all access immediately                                                                                            | Matches §7; prevents stale access after year change or staff departure                                                                                                                  | Developer (technical)                             |
+| 2026-10-26 | Public site language is chosen with a cookie-based switch on the same URLs (default English)                                                                                                                              | Simple, works without JavaScript and keeps the agreed routes. Trade-off: Hindi pages are not separately indexed by search engines; can move to /hi/ URLs later if SEO for Hindi matters | Pending school confirmation of default language   |
+| 2026-10-26 | Notification queue table deferred to the Week 4 migration                                                                                                                                                                 | Keeps Week 1–3 focused on the core; submit function already records absent counts for the audit trail                                                                                   | Developer (technical)                             |
+| 2026-10-26 | Guardian phone stored in E.164 format; guardian notification consent stored per student (default false)                                                                                                                   | Required for WhatsApp later; consent defaults to no messaging                                                                                                                           | Developer (technical)                             |
+| 2026-10-26 | Provisional class list: Nursery, LKG, UKG, Class 1–8, one section "A" each (seed only)                                                                                                                                    | Placeholder until the school confirms class/section naming                                                                                                                              | Pending school confirmation                       |
+| 2026-10-26 | Staff sign in with email + password; accounts created only by an admin (temporary password shown once); no public sign-up                                                                                                 | Matches "no public self-registration"; works without an email service. Phone/OTP login can be added later if teachers lack email                                                        | Pending school confirmation                       |
+| 2026-10-26 | Disabling a staff account sets `is_active = false` and bans the Auth user                                                                                                                                                 | App and RLS deny disabled profiles on every request; the ban also stops sign-in and token refresh                                                                                       | Developer (technical)                             |
+| 2026-10-26 | Login shows one error for unknown email, wrong password and disabled account                                                                                                                                              | Supabase reveals bans even with a wrong password, so a specific message would expose which emails are disabled accounts                                                                 | Developer (security)                              |
+| 2026-10-26 | Teachers see students in their sections but the teacher UI hides guardian contact details                                                                                                                                 | Data minimisation. RLS still allows teachers to read those columns via the API; a column-level restriction (view or column grants) is a candidate hardening task                        | Pending school confirmation of what teachers need |
+| 2026-10-26 | Staff app is English-only for the MVP; the public website stays bilingual                                                                                                                                                 | Keeps Week 2–3 focused on the core workflow; Hindi staff UI would be a change request if teachers need it                                                                               | Pending school confirmation                       |
+| 2026-10-26 | Attendance statuses Present / Absent / Late / Excused; attendance rate = (present + late) ÷ (present + late + absent), excused excluded; under 75% highlighted                                                            | Common school practice; makes "late" count as attended                                                                                                                                  | Pending school confirmation                       |
+| 2026-10-26 | Only submitted or locked days count in reports; drafts are shown as "not counted", never as absences                                                                                                                      | Roadmap attendance invariant 1                                                                                                                                                          | Developer (technical)                             |
+| 2026-10-26 | Error details are passed to pages as fixed keys, never as text in the URL                                                                                                                                                 | Prevents crafted links from showing arbitrary wording on school pages                                                                                                                   | Developer (security)                              |
+| 2026-10-26 | Production site public at uttamniketan.vercel.app; Vercel Authentication kept on preview deployments only                                                                                                                 | A public school website must not require a Vercel login; previews stay private                                                                                                          | Project owner (deployment requested)              |
+| 2026-10-26 | WhatsApp alerts ship switched off: school switch (Settings) AND server `WHATSAPP_MODE` (off/test/live) must both allow sending; test mode only reaches allow-listed numbers                                               | No real parent messages without school authorization and Meta approval (roadmap §4.3, §15)                                                                                              | Developer (safety)                                |
+| 2026-10-26 | Alerts for absences older than 2 days are skipped, not sent                                                                                                                                                               | Prevents a backlog of stale alerts when messaging is switched on later                                                                                                                  | Pending school confirmation                       |
+| 2026-10-26 | Alerts only for Absent (not Late/Excused) and only with recorded guardian consent and phone                                                                                                                               | Data minimisation and consent                                                                                                                                                           | Pending school confirmation                       |
+| 2026-10-26 | Template body variables: {{1}} name, {{2}} full class label ("Class 3 – A"), {{3}} DD-MM-YYYY; template wording should use "of {{2}}"                                                                                     | Avoids "Class Class 3 – A"                                                                                                                                                              | Pending school review of template text            |
+| 2026-10-26 | Backups: weekly manual `supabase db dump` (roles/schema/data) plus before every migration, stored privately outside GitHub; consider Supabase Pro for automatic backups                                                   | Free plan has no downloadable backups                                                                                                                                                   | Pending owner/school decision                     |
+| 2026-10-27 | Classes, sections and academic years managed in Settings → Classes & academic year; switching the active year and copying a year's structure are atomic, audited database functions; deletes refused while history exists | Completes roadmap §4.2 "School profile and academic year setup / Classes and sections", which was missed in Week 2                                                                      | Developer (scope gap closed)                      |
+| 2026-10-27 | Year-end promotion of students is a separate change request                                                                                                                                                               | Moving students between years needs school rules (who is promoted, detained, leaves)                                                                                                    | Pending school confirmation                       |
+| 2026-10-26 | CSV student import not built yet                                                                                                                                                                                          | Roadmap marks it "if in accepted scope"; not yet confirmed                                                                                                                              | Pending school confirmation                       |
 
 ---
 

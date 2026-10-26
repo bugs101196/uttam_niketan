@@ -25,7 +25,7 @@ If a file shows an error, stop and send the error text to the developer. Do not 
 ## Step 3 — Create the school, year and classes
 
 Same way, run `supabase/setup/01-school.sql`. The result lists 11 classes (Nursery to Class 8, section A).
-If the school's class names or sections differ, edit the list in the file before running it.
+Class names and sections can be changed later in the app (**Settings → Classes & academic year**), so the default list is fine to start with.
 
 ## Step 4 — Turn off public sign-up
 

@@ -24,6 +24,7 @@ defect register and decision log when milestones change (see the `ship-feature` 
 
 - **Done:** Weeks 1–3 on `main`: foundation, auth/permissions, students, staff/assignments, attendance (roster, draft/submit, corrections, lock, history) and reports.
 - **Week 4:** WhatsApp notification system (queue, worker, signed webhook, Settings page; **off by default**, modes off/test/live), QA sweep, backup/restore rehearsal and handover docs (`docs/handover/`) on branch `week-4-notifications-handover`.
+- **Classes & years:** admin screen `Settings → Classes & academic year` (migration `20261027000100`) on branch `classes-and-years`; year-end student promotion is still a change request.
 - **Live:** https://uttamniketan.vercel.app (Vercel project `uttam_niketan`, team `aksundram44-9592s-projects`; pushes to `main` deploy to production). Staff login there needs the hosted database set up.
 - **Next:** school demo and acceptance; WhatsApp go-live only after the checklist in `docs/whatsapp-templates.md`. Post-MVP items are change requests (`docs/handover/known-issues.md`).
 - **Waiting on the owner:** apply migrations to the hosted Supabase project (Vercel's Supabase integration) and turn off sign-ups there; first real admin via `scripts/create-admin.mjs`; set `CRON_SECRET` in Vercel (see `docs/handover/operations.md`).
