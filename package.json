@@ -13,7 +13,9 @@
     "test:db": "vitest run --project db",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run lint && npm run typecheck && npm test"
+    "check": "npm run lint && npm run typecheck && npm test",
+    "test:api": "vitest run --project api",
+    "gen:types": "supabase gen types typescript --local --schema public > src/types/database.ts && prettier --write src/types/database.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

@@ -24,6 +24,13 @@ export default defineConfig({
           fileParallelism: false,
         },
       },
+      {
+        extends: true,
+        test: {
+          name: "api",
+          include: ["tests/api/**/*.test.ts"],
+        },
+      },
     ],
   },
 });
