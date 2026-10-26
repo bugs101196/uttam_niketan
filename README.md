@@ -4,6 +4,7 @@ Public website and school management app for Uttam Niketan (Nursery–Class 8, B
 
 - **Roadmap and source of truth:** [`docs/PROJECT_ROADMAP.md`](docs/PROJECT_ROADMAP.md)
 - **Stack:** Next.js App Router + TypeScript, Tailwind CSS, Supabase (PostgreSQL, Auth, RLS), Vercel
+- **Handover:** [admin guide](docs/handover/admin-guide.md) · [teacher guide](docs/handover/teacher-guide.md) · [operations runbook](docs/handover/operations.md) · [known issues](docs/handover/known-issues.md) · [WhatsApp setup](docs/whatsapp-templates.md)
 
 ## Getting started
 
@@ -62,13 +63,15 @@ which matches `supabase start`). `tests/db/supabase-shim.sql` stands in for Supa
 ```text
 src/app/(public)/      Public website (home, about, academics, admissions, notices, gallery, contact)
 src/app/(auth)/        Staff login and sign-out actions
-src/app/(dashboard)/   Staff app: dashboard, attendance, reports, students, staff (admin)
+src/app/(dashboard)/   Staff app: dashboard, attendance, reports, students, staff and settings (admin)
+src/app/api/           WhatsApp webhook and the authenticated notification cron
 src/app/actions/       Server actions (language switch)
 src/middleware.ts      Session refresh + redirect to login for staff pages
 src/components/        Layout and form components
 src/lib/auth/          requireStaff / requireAdmin and safe redirect helpers
 src/lib/supabase/      User (RLS) client and server-only service-role client
 src/lib/validation/    Zod schemas shared by forms and server actions
+src/lib/whatsapp/      WhatsApp config, Cloud API client, webhook verification, queue worker
 src/services/          Data access for students and staff
 src/i18n/              English/Hindi dictionaries and locale helpers
 scripts/               Admin provisioning and local dev user seeding

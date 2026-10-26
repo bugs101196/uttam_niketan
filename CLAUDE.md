@@ -23,9 +23,10 @@ defect register and decision log when milestones change (see the `ship-feature` 
 ## Status (update when it changes)
 
 - **Done:** Weeks 1–3 on `main`: foundation, auth/permissions, students, staff/assignments, attendance (roster, draft/submit, corrections, lock, history) and reports.
+- **Week 4:** WhatsApp notification system (queue, worker, signed webhook, Settings page; **off by default**, modes off/test/live), QA sweep, backup/restore rehearsal and handover docs (`docs/handover/`) on branch `week-4-notifications-handover`.
 - **Live:** https://uttamniketan.vercel.app (Vercel project `uttam_niketan`, team `aksundram44-9592s-projects`; pushes to `main` deploy to production). Staff login there needs the hosted database set up.
-- **Next:** Week 4 — WhatsApp absence notifications (only if the school's WhatsApp Business setup is ready), full QA, backup/restore rehearsal, production release and handover.
-- **Waiting on the owner:** apply migrations to the hosted Supabase project (Vercel's Supabase integration) and turn off sign-ups there; first real admin via `scripts/create-admin.mjs`.
+- **Next:** school demo and acceptance; WhatsApp go-live only after the checklist in `docs/whatsapp-templates.md`. Post-MVP items are change requests (`docs/handover/known-issues.md`).
+- **Waiting on the owner:** apply migrations to the hosted Supabase project (Vercel's Supabase integration) and turn off sign-ups there; first real admin via `scripts/create-admin.mjs`; set `CRON_SECRET` in Vercel (see `docs/handover/operations.md`).
 - **Waiting on the school:** content/logo/address, class & section names, attendance correction rules, late/excused usage and the 75% threshold, required student fields, whether teachers need guardian phones, Hindi staff UI, CSV import, email vs phone login for teachers.
 
 ## Gotchas learned the hard way
@@ -33,4 +34,6 @@ defect register and decision log when milestones change (see the `ship-feature` 
 - `sections` has no direct relationship to `academic_years`; filter the active year through `classes!inner(academic_years!inner(is_active))`.
 - In local `supabase/config.toml`, `[auth] enable_signup = false` blocks sign-up; `[auth.email] enable_signup` must stay `true` or email login is disabled entirely.
 - Supabase reports "User is banned" even with a wrong password, so login must keep one generic error message.
+- Run the Docker `pg_dump`/`pg_restore` inside `supabase_db_uttam_niketan` (PG 17); the host has PG 16 tools.
+- In Playwright, scope selectors: header "Sign out" is also a submit button, and headings often sit inside a wrapper `div` (no `h2 + p` sibling).
 - After a successful `useActionState` submit React resets the form; echo `values` + bump `attempt` (form `key`) to keep input on errors.

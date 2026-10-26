@@ -70,7 +70,7 @@ The school currently relies on paper records. The app should be practical on low
 - [ ] Week 3 — Attendance workflow, reports, security and regression testing
 - [ ] Week 4 — WhatsApp integration if approved/setup is ready, full QA, deployment and handover
 
-**Current phase:** Week 3 — attendance workflow, reports and corrections built (Days 11–15) and merged to `main`; production site live at https://uttamniketan.vercel.app (staff login pending hosted database setup)  
+**Current phase:** Week 4 — notification system (off by default), QA, backup rehearsal and handover documents built on branch `week-4-notifications-handover`; waiting on hosted database setup, school content/decisions and WhatsApp approval for final acceptance  
 **Target duration:** 4 weeks, approximately 20 working days  
 **Actual start date:** TBD after project scope approval  
 **Target launch date:** TBD based on actual start date and dependencies  
@@ -912,14 +912,14 @@ Update these checkboxes as work progresses.
 ### Week 4 — Integration and launch
 - [ ] WhatsApp readiness confirmed
 - [ ] Template approval/test setup complete if available
-- [ ] Notification queue and retries tested
-- [ ] Webhook verification/status handling tested
-- [ ] Full regression completed
-- [ ] P0/P1 defects closed
-- [ ] Backup/restore rehearsal completed
+- [x] Notification queue and retries tested
+- [x] Webhook verification/status handling tested
+- [x] Full regression completed
+- [x] P0/P1 defects closed
+- [x] Backup/restore rehearsal completed
 - [ ] Production deployment approved
 - [ ] School staff trained
-- [ ] Handover delivered
+- [x] Handover documents written (`docs/handover/`); walkthrough with the school pending
 - [ ] Final acceptance recorded
 
 ---
@@ -974,13 +974,17 @@ Append one entry at the end of each week. Do not delete earlier entries.
 - **Approval status:** pending school demo with pilot teachers.
 
 ### Week 4
-- **Dates:**
+- **Dates:** 2026-10-26
 - **Completed:**
-- **Production release/version:**
-- **Tests passed:**
-- **Known remaining defects:**
-- **Handover items completed:**
-- **Client acceptance status:**
+  - Day 16–17 — Migration `20261026000300`: `notification_jobs` queue (dedupe key per session+student, bounded attempts, exponential backoff, 2-day expiry, stale-claim recovery), school-level `whatsapp_enabled` switch, alerts queued atomically on submit and corrections (cancelled if corrected before sending). Worker/webhook functions granted to the service role only; admins can read the log.
+  - Day 16–18 — WhatsApp Cloud API client (template params name / class / DD-MM-YYYY in the guardian's language, permanent-vs-retry classification, token never logged), worker run after submit/correct (`after()`) plus a daily authenticated cron, signed webhook (HMAC SHA-256, constant-time) with handshake, monotonic status updates. Modes off/test/live; test mode sends only to allow-listed numbers. Admin **Settings** page: school switch, server status, "send queued alerts now", filterable message log. Template text and go-live checklist in `docs/whatsapp-templates.md`.
+  - Day 19 — QA sweep on a production build: 23 pages × 4 widths (320/390/768/1280) with no horizontal overflow or console errors, 93 internal links with no failures, axe WCAG 2 A/AA audit with zero violations after one fix. Environment variables reviewed (names only). Backup/restore rehearsal passed (see operations runbook).
+  - Day 20 — Handover documents: `docs/handover/admin-guide.md`, `teacher-guide.md`, `operations.md` (ownership, env inventory, first setup, releases/rollback, backups/restore, incidents), `known-issues.md`.
+- **Production release/version:** Weeks 1–3 live at https://uttamniketan.vercel.app; Week 4 on branch until merged.
+- **Tests passed:** lint, typecheck, production build; 133 automated tests (58 DB, 19 direct Data API, 56 unit). End-to-end against a fake WhatsApp API in test mode: one alert sent to the allow-listed number in Hindi with correct parameter order, the non-allow-listed guardian skipped, the non-consenting guardian never queued; signed webhook marked it delivered; unsigned/badly signed webhooks 401; cron 401 without secret; teacher 404 on Settings. Mutation checks: removing the consent check (5 tests failed), the status ordering check (1 failed) and webhook signature comparison (1 failed).
+- **Known remaining defects:** none open; see `docs/handover/known-issues.md` for accepted items and dependencies.
+- **Handover items completed:** guides, runbook, env inventory, backup procedure with rehearsal evidence, known-issues register. Pending: training session, account transfer, school acceptance.
+- **Client acceptance status:** pending school demo.
 
 ---
 
@@ -991,6 +995,8 @@ Add one row per issue. Do not include real student details or secrets.
 | ID | Title | Priority | Environment | Status | Owner | Fix version / retest |
 |---|---|---|---|---|---|---|
 | BUG-001 | /students returned 500: active-year filter joined sections→academic_years directly (no such relationship) | P1 | Local | Closed | Developer | Fixed on week-2 branch; browser retest passed 2026-10-26 |
+| BUG-003 | `npm run gen:types` called an uninstalled `supabase` binary and the shell redirect emptied `src/types/database.ts` before failing | P2 | Local | Closed | Developer | Script now uses `npx supabase@2`, writes to a temp file and replaces only on success; regenerated types verified 2026-10-26 |
+| BUG-004 | Staff header logo link had no accessible name on phones (axe `link-name`, serious) | P2 | Local | Closed | Developer | Text kept for screen readers; axe re-run: 0 violations 2026-10-26 |
 | BUG-002 | Local Supabase config disabled email login entirely when turning off sign-ups | P1 | Local | Closed | Developer | Fixed in supabase/config.toml; login + blocked sign-up verified 2026-10-26 |
 
 ---
@@ -1019,6 +1025,11 @@ Record significant decisions and why they were made.
 | 2026-10-26 | Only submitted or locked days count in reports; drafts are shown as "not counted", never as absences | Roadmap attendance invariant 1 | Developer (technical) |
 | 2026-10-26 | Error details are passed to pages as fixed keys, never as text in the URL | Prevents crafted links from showing arbitrary wording on school pages | Developer (security) |
 | 2026-10-26 | Production site public at uttamniketan.vercel.app; Vercel Authentication kept on preview deployments only | A public school website must not require a Vercel login; previews stay private | Project owner (deployment requested) |
+| 2026-10-26 | WhatsApp alerts ship switched off: school switch (Settings) AND server `WHATSAPP_MODE` (off/test/live) must both allow sending; test mode only reaches allow-listed numbers | No real parent messages without school authorization and Meta approval (roadmap §4.3, §15) | Developer (safety) |
+| 2026-10-26 | Alerts for absences older than 2 days are skipped, not sent | Prevents a backlog of stale alerts when messaging is switched on later | Pending school confirmation |
+| 2026-10-26 | Alerts only for Absent (not Late/Excused) and only with recorded guardian consent and phone | Data minimisation and consent | Pending school confirmation |
+| 2026-10-26 | Template body variables: {{1}} name, {{2}} full class label ("Class 3 – A"), {{3}} DD-MM-YYYY; template wording should use "of {{2}}" | Avoids "Class Class 3 – A" | Pending school review of template text |
+| 2026-10-26 | Backups: weekly manual `supabase db dump` (roles/schema/data) plus before every migration, stored privately outside GitHub; consider Supabase Pro for automatic backups | Free plan has no downloadable backups | Pending owner/school decision |
 | 2026-10-26 | CSV student import not built yet | Roadmap marks it "if in accepted scope"; not yet confirmed | Pending school confirmation |
 
 ---
