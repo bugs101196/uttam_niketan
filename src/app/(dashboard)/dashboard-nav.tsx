@@ -11,6 +11,7 @@ const items: { href: string; label: string; roles: StaffRole[] }[] = [
   { href: "/reports/attendance", label: "Reports", roles: ["admin", "teacher"] },
   { href: "/students", label: "Students", roles: ["admin", "teacher"] },
   { href: "/staff", label: "Staff", roles: ["admin"] },
+  { href: "/settings", label: "Settings", roles: ["admin"] },
 ];
 
 export function DashboardNav({ role }: { role: StaffRole }) {

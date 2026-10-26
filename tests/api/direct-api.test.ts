@@ -236,6 +236,30 @@ describe.skipIf(!url)("direct Data API access", () => {
       expect(written).toEqual([]);
     });
 
+    it("keeps the notification log and worker functions away from clients", async () => {
+      expect((await teacher.from("notification_jobs").select("id")).data).toEqual([]);
+      const anonRead = await anon.from("notification_jobs").select("id");
+      expect(anonRead.error?.code === "42501" || anonRead.data?.length === 0).toBe(true);
+      for (const c of [admin, teacher]) {
+        expect((await c.rpc("claim_notification_jobs", { p_limit: 5 })).error?.code).toBe("42501");
+        expect(
+          (await c.rpc("apply_whatsapp_status", { p_provider_message_id: "wamid.x", p_status: "read" })).error?.code,
+        ).toBe("42501");
+      }
+      const { error } = await admin.from("notification_jobs").update({ status: "sent" }).not("id", "is", null);
+      expect(error?.code).toBe("42501");
+    });
+
+    it("lets only an admin change the school's messaging setting", async () => {
+      const { data: school } = await teacher.from("schools").select("id, whatsapp_enabled").single();
+      const { data } = await teacher
+        .from("schools")
+        .update({ whatsapp_enabled: !school!.whatsapp_enabled })
+        .eq("id", school!.id)
+        .select("id");
+      expect(data).toEqual([]);
+    });
+
     it("keeps the audit history hidden from teachers", async () => {
       const { data } = await teacher.from("audit_logs").select("id");
       expect(data).toEqual([]);

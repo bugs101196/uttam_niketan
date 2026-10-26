@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import {
   attendanceRecordsSchema,
   correctionSchema,
@@ -10,6 +11,19 @@ import {
 } from "@/lib/attendance";
 import { requireAdmin, requireStaff } from "@/lib/auth/staff";
 import { createClient } from "@/lib/supabase/server";
+import { processNotificationQueue } from "@/lib/whatsapp/worker";
+
+/** Sends any absence alerts the database just queued, after the response is sent. */
+function sendQueuedAlerts() {
+  after(async () => {
+    try {
+      await processNotificationQueue();
+    } catch (error) {
+      // The daily cron run retries anything left queued.
+      console.error("attendance: notification run failed", (error as Error).message);
+    }
+  });
+}
 
 // Every action re-checks the user, validates input with Zod, then calls a
 // database function that checks permissions again, derives the acting user
@@ -81,6 +95,7 @@ export async function submitAttendance(sessionId: string, records: unknown): Pro
   }
   revalidatePath("/attendance");
   revalidatePath(`/attendance/${sessionId}`);
+  sendQueuedAlerts();
   return { ok: true };
 }
 
@@ -118,6 +133,7 @@ export async function correctAttendance(
     return { message: describeAttendanceError(error) };
   }
   revalidatePath(`/attendance/${sessionId}`);
+  sendQueuedAlerts();
   return { success: "Correction saved and recorded in the history." };
 }
 
