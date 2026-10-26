@@ -25,7 +25,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             >
               U
             </span>
-            <span className="hidden sm:inline">Uttam Niketan</span>
+            <span className="sr-only sm:not-sr-only">Uttam Niketan</span>
           </Link>
           <div className="flex items-center gap-3">
             <div className="text-right text-sm leading-tight">
