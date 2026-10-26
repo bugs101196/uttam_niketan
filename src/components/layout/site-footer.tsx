@@ -1,0 +1,36 @@
+import Link from "next/link";
+import type { Dictionary } from "@/i18n/dictionaries";
+import { navLinks } from "./nav-links";
+
+export function SiteFooter({ t }: { t: Dictionary }) {
+  return (
+    <footer className="mt-16 bg-brand-strong text-brand-contrast">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2">
+        <div>
+          <p className="text-lg font-bold">{t.meta.siteName}</p>
+          <p className="mt-1 text-sm opacity-80">{t.home.eyebrow}</p>
+          <p className="mt-1 text-sm opacity-80">{t.footer.address}</p>
+        </div>
+        <nav aria-label={t.nav.menu}>
+          <ul className="grid grid-cols-2 gap-x-4">
+            {navLinks.map((link) => (
+              <li key={link.key}>
+                <Link href={link.href} className="flex min-h-11 items-center text-sm hover:underline">
+                  {t.nav[link.key]}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+      <div className="border-t border-white/15">
+        {/* Staff login link is added with the /login route in Week 2. */}
+        <div className="mx-auto max-w-6xl px-4 py-4 text-sm opacity-80">
+          <p>
+            © {new Date().getFullYear()} {t.meta.siteName}. {t.footer.rights}
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}

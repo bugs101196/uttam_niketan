@@ -70,11 +70,11 @@ The school currently relies on paper records. The app should be practical on low
 - [ ] Week 3 — Attendance workflow, reports, security and regression testing
 - [ ] Week 4 — WhatsApp integration if approved/setup is ready, full QA, deployment and handover
 
-**Current phase:** Planning / setup (update once implementation begins)  
+**Current phase:** Week 1 — technical foundation built ahead of school sign-off (Days 3–5); Days 1–2 (requirements, wireframes) awaiting the school  
 **Target duration:** 4 weeks, approximately 20 working days  
 **Actual start date:** TBD after project scope approval  
 **Target launch date:** TBD based on actual start date and dependencies  
-**Last updated:** YYYY-MM-DD
+**Last updated:** 2026-10-26
 
 ### Decisions already agreed
 
@@ -882,11 +882,11 @@ Update these checkboxes as work progresses.
 - [ ] Scope confirmed
 - [ ] School content and class structure collected
 - [ ] Design/wireframes approved
-- [ ] Next.js repository set up
+- [x] Next.js repository set up
 - [ ] Supabase development project created
 - [ ] Vercel preview configured
-- [ ] Initial database migration tested
-- [ ] Public website shell navigable
+- [x] Initial database migration tested (40 automated DB tests on a clean PostgreSQL 16 database)
+- [x] Public website shell navigable (EN/HI switch, mobile menu; placeholder content clearly labelled)
 - [ ] Week 1 release approved
 
 ### Week 2 — Website, auth and students
@@ -929,14 +929,19 @@ Update these checkboxes as work progresses.
 Append one entry at the end of each week. Do not delete earlier entries.
 
 ### Week 1
-- **Dates:**
+- **Dates:** started 2026-10-26
 - **Completed:**
-- **Demo / release version:**
-- **Tests passed:**
-- **Open defects:**
-- **Decisions made:**
-- **Dependencies / blockers:**
-- **Approval status:**
+  - Next.js 15 + TypeScript (strict) + Tailwind 4 scaffold, ESLint, Prettier, Vitest; `.env.example`; `npm run check`.
+  - Migrations: core schema (schools, profiles, academic years, classes, sections, students, teacher assignments, attendance sessions/records, append-only audit log) with composite foreign keys for school/year consistency, case-insensitive uniqueness, status checks, indexes and no cascading deletes.
+  - Migration: RLS on every table, narrowed table grants, private authorization helpers, profile self-escalation protection, and transactional attendance functions (open, save draft, submit, admin correction with audit, lock).
+  - Fictional seed data (11 classes, 55 students).
+  - Public website shell: header/footer, no-JS mobile menu, English/Hindi switch, homepage and placeholder pages for all public routes, robots.txt and sitemap.
+- **Demo / release version:** not yet deployed (Vercel/Supabase projects not created)
+- **Tests passed:** lint, typecheck, production build; 43 automated tests (12 schema, 13 RLS, 15 attendance, 3 unit). Mutation check: disabling the active-teacher/active-year checks made 3 tests fail as expected. Browser check of all public routes at 360px and 1280px, no horizontal scroll, language switch persists across pages.
+- **Open defects:** none
+- **Decisions made:** see Decision Log (2026-10-26 entries)
+- **Dependencies / blockers:** GitHub push access for Claude (GitHub App installation); Supabase dev project; Vercel project; school content and confirmations in §3.
+- **Approval status:** pending school review of requirements and wireframes
 
 ### Week 2
 - **Dates:**
@@ -987,7 +992,13 @@ Record significant decisions and why they were made.
 |---|---|---|---|
 | YYYY-MM-DD | Use responsive web app/PWA rather than native Android for MVP | Faster delivery and one codebase for desktop/mobile | Project baseline |
 | YYYY-MM-DD | Deliver attendance before live WhatsApp messaging | Core school workflow remains useful if external messaging approval is delayed | Project baseline |
-| YYYY-MM-DD | TBD | TBD | TBD |
+| 2026-10-26 | Attendance is written only through security-definer database functions; clients have read-only access to attendance tables | Keeps roster validation, idempotent submit and auditing in one transactional place that cannot be bypassed through the API | Developer (technical) |
+| 2026-10-26 | Provisional correction policy: teachers edit drafts only; after submission only an admin can correct, with a mandatory reason, until the session is locked | Safe default until the school confirms its correction rules (§3) | Pending school confirmation |
+| 2026-10-26 | Teachers' access is limited to sections assigned in the active academic year; deactivated profiles lose all access immediately | Matches §7; prevents stale access after year change or staff departure | Developer (technical) |
+| 2026-10-26 | Public site language is chosen with a cookie-based switch on the same URLs (default English) | Simple, works without JavaScript and keeps the agreed routes. Trade-off: Hindi pages are not separately indexed by search engines; can move to /hi/ URLs later if SEO for Hindi matters | Pending school confirmation of default language |
+| 2026-10-26 | Notification queue table deferred to the Week 4 migration | Keeps Week 1–3 focused on the core; submit function already records absent counts for the audit trail | Developer (technical) |
+| 2026-10-26 | Guardian phone stored in E.164 format; guardian notification consent stored per student (default false) | Required for WhatsApp later; consent defaults to no messaging | Developer (technical) |
+| 2026-10-26 | Provisional class list: Nursery, LKG, UKG, Class 1–8, one section "A" each (seed only) | Placeholder until the school confirms class/section naming | Pending school confirmation |
 
 ---
 
