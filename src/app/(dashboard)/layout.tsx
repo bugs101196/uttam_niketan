@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SchoolLogo } from "@/components/layout/school-logo";
 import { signOut } from "@/app/(auth)/login/actions";
 import { requireStaff } from "@/lib/auth/staff";
 import { DashboardNav } from "./dashboard-nav";
@@ -19,12 +20,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <Link href="/dashboard" className="flex min-h-11 items-center gap-2 font-bold text-brand">
-            <span
-              aria-hidden
-              className="flex size-9 items-center justify-center rounded-full bg-brand text-brand-contrast"
-            >
-              U
-            </span>
+            <SchoolLogo size={40} />
             <span className="sr-only sm:not-sr-only">Uttam Niketan</span>
           </Link>
           <div className="flex items-center gap-3">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { SchoolLogo } from "@/components/layout/school-logo";
 import { getStaff } from "@/lib/auth/staff";
 import { isSupabaseConfigured } from "@/lib/env";
 import { LoginForm } from "./login-form";
@@ -28,12 +29,7 @@ export default async function LoginPage({
     <div className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm">
         <Link href="/" className="mb-8 flex items-center justify-center gap-3">
-          <span
-            aria-hidden
-            className="flex size-11 items-center justify-center rounded-full bg-brand text-lg font-bold text-brand-contrast"
-          >
-            U
-          </span>
+          <SchoolLogo size={56} priority />
           <span className="text-xl font-bold text-brand">Uttam Niketan</span>
         </Link>
         <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">

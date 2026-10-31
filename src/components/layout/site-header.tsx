@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { LanguageSwitch } from "./language-switch";
+import { SchoolLogo } from "./school-logo";
 import { navLinks } from "./nav-links";
 
 // Server-rendered header. The mobile menu uses <details> so it works without
@@ -11,12 +12,7 @@ export function SiteHeader({ locale, t }: { locale: Locale; t: Dictionary }) {
     <header className="sticky top-0 z-20 border-b border-border bg-surface/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="flex min-h-11 items-center gap-3">
-          <span
-            aria-hidden
-            className="flex size-10 items-center justify-center rounded-full bg-brand text-lg font-bold text-brand-contrast"
-          >
-            {locale === "hi" ? "उ" : "U"}
-          </span>
+          <SchoolLogo size={44} priority />
           <span className="text-lg font-bold text-brand">{t.meta.siteName}</span>
         </Link>
 

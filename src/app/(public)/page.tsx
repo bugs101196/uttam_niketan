@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PlaceholderBanner } from "@/components/layout/placeholder-banner";
+import { SchoolLogo } from "@/components/layout/school-logo";
 import { getI18n } from "@/i18n/server";
 
 export default async function HomePage() {
@@ -9,23 +10,28 @@ export default async function HomePage() {
   return (
     <>
       <section className="bg-brand text-brand-contrast">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
-          <p className="text-sm font-semibold tracking-wide text-accent uppercase">{home.eyebrow}</p>
-          <h1 className="mt-3 text-4xl font-bold sm:text-5xl">{home.title}</h1>
-          <p className="mt-4 max-w-2xl text-lg opacity-90 sm:text-xl">{home.tagline}</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/admissions"
-              className="flex min-h-12 items-center justify-center rounded-lg bg-accent px-6 font-semibold text-foreground hover:brightness-95"
-            >
-              {home.ctaAdmissions}
-            </Link>
-            <Link
-              href="/contact"
-              className="flex min-h-12 items-center justify-center rounded-lg border border-white/40 px-6 font-semibold hover:bg-white/10"
-            >
-              {home.ctaContact}
-            </Link>
+        <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-14 sm:py-20 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-sm font-semibold tracking-wide text-accent uppercase">{home.eyebrow}</p>
+            <h1 className="mt-3 text-4xl font-bold sm:text-5xl">{home.title}</h1>
+            <p className="mt-4 max-w-2xl text-lg opacity-90 sm:text-xl">{home.tagline}</p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/admissions"
+                className="flex min-h-12 items-center justify-center rounded-lg bg-accent px-6 font-semibold text-foreground hover:brightness-95"
+              >
+                {home.ctaAdmissions}
+              </Link>
+              <Link
+                href="/contact"
+                className="flex min-h-12 items-center justify-center rounded-lg border border-white/40 px-6 font-semibold hover:bg-white/10"
+              >
+                {home.ctaContact}
+              </Link>
+            </div>
+          </div>
+          <div className="mx-auto shrink-0 rounded-[2rem] bg-white p-4 shadow-lg md:mx-0">
+            <SchoolLogo size={220} alt={t.logoAlt} priority />
           </div>
         </div>
       </section>
