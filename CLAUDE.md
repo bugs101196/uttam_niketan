@@ -26,12 +26,12 @@ defect register and decision log when milestones change (see the `ship-feature` 
 - **Next change request:** year-end student promotion into the next year's classes (see `docs/handover/known-issues.md`).
 - **Live:** https://uttamniketan.vercel.app (Vercel project `uttam_niketan`, team `aksundram44-9592s-projects`; pushes to `main` deploy to production). Staff login there needs the hosted database set up.
 - **Next:** school demo and acceptance; WhatsApp go-live only after the checklist in `docs/whatsapp-templates.md`. Post-MVP items are change requests (`docs/handover/known-issues.md`).
-- **Waiting on the owner:** hosted database setup per `docs/handover/setup-guide.md` (4 migrations, school setup SQL, sign-ups off, principal account) and `CRON_SECRET` in Vercel.
+- **Waiting on the owner:** hosted database setup per `docs/handover/setup-guide.md` (5 migrations, school setup SQL, sign-ups off, principal account) and `CRON_SECRET` in Vercel.
 - **Waiting on the school:** content/logo/address, class & section names, attendance correction rules, late/excused usage and the 75% threshold, required student fields, whether teachers need guardian phones, Hindi staff UI, CSV import, email vs phone login for teachers.
 
 ## ▶️ Resume here (as of 2026-10-27)
 
-1. Ask whether the owner finished `docs/handover/setup-guide.md` (hosted Supabase: 4 migrations in the SQL
+1. Ask whether the owner finished `docs/handover/setup-guide.md` (hosted Supabase: 5 migrations in the SQL
    Editor, `supabase/setup/01-school.sql`, sign-ups off, principal via Authentication → Users +
    `02-principal-profile.sql`, `CRON_SECRET` in Vercel + redeploy). Help with any error they paste.
 2. Once set up, verify the live staff flow at https://uttamniketan.vercel.app/login (principal → Staff →

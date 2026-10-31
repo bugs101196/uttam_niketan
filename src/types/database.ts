@@ -394,6 +394,7 @@ export type Database = {
           name_hi: string | null;
           timezone: string;
           updated_at: string;
+          website_theme: string;
           whatsapp_enabled: boolean;
         };
         ComputedFields: never;
@@ -405,6 +406,7 @@ export type Database = {
           name_hi?: string | null;
           timezone?: string;
           updated_at?: string;
+          website_theme?: string;
           whatsapp_enabled?: boolean;
         };
         Update: {
@@ -415,6 +417,7 @@ export type Database = {
           name_hi?: string | null;
           timezone?: string;
           updated_at?: string;
+          website_theme?: string;
           whatsapp_enabled?: boolean;
         };
         Relationships: [];
@@ -711,6 +714,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      website_theme: { Args: Record<PropertyKey, never>; Returns: string };
     };
     Enums: {
       app_language: "en" | "hi";

@@ -18,6 +18,7 @@ for "Success. No rows returned".
 2. `supabase/migrations/20261026000200_auth_rls_attendance.sql`
 3. `supabase/migrations/20261026000300_absence_notifications.sql`
 4. `supabase/migrations/20261027000100_academic_year_management.sql`
+5. `supabase/migrations/20261031000100_website_theme.sql`
 
 (Files are in the GitHub repo `bugs101196/uttam_niketan`. Use a new query tab for each file.)
 
