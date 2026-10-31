@@ -13,6 +13,8 @@ npx supabase status || npx supabase start -x realtime,storage-api,imgproxy,studi
 
 - Migrations in `supabase/migrations/` and `supabase/seed.sql` apply automatically on start.
   `npx supabase db reset` reapplies them from scratch (wipes local data).
+- If `npx supabase migration up` fails with "already exists" (history out of sync after a container
+  restart), run `npx supabase db reset`, then re-run the dev-user script below. Local data is fictional.
 - **Cloud containers:** the Docker daemon may not be running. Start it with
   `(nohup dockerd > /var/tmp/dockerd.log 2>&1 &)`, then wait about 8s. The default image registry
   (public.ecr.aws) can be blocked by the proxy, so prefix the start command with

@@ -49,3 +49,10 @@ description: The Uttam Niketan workflow for building a roadmap item end to end â
    user asks.
 4. Report to the user what was built, what was verified (with numbers), what was not, and what is
    waiting on them or the school.
+
+## Deploying
+
+Merging to `main` and pushing deploys production. Then poll Vercel (`list_deployments` for project
+`uttam_niketan`, then `list_deployment_events`) until the deployment is READY and owns the
+`uttamniketan.vercel.app` alias, and tell the user to hard-refresh. A new migration also has to be
+added to `docs/handover/setup-guide.md` and run by the owner in the hosted Supabase SQL Editor.
