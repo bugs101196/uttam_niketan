@@ -29,7 +29,23 @@ defect register and decision log when milestones change (see the `ship-feature` 
 - **Waiting on the owner:** hosted database setup per `docs/handover/setup-guide.md` (5 migrations, school setup SQL, sign-ups off, principal account) and `CRON_SECRET` in Vercel.
 - **Waiting on the school:** content/logo/address, class & section names, attendance correction rules, late/excused usage and the 75% threshold, required student fields, whether teachers need guardian phones, Hindi staff UI, CSV import, email vs phone login for teachers.
 
-## ▶️ Resume here (as of 2026-10-27)
+## ▶️ Resume here (as of 2026-10-31)
+
+0. **Finish CR-002 website colour themes** (owner asked for it). Done: migration
+   `20261031000100_website_theme.sql` (`schools.website_theme`, public `website_theme()`), types,
+   `src/lib/themes.ts` (5 themes) and `tests/unit/themes.test.ts` (WCAG contrast). To do: admin
+   Settings → "Website colours" (radio swatches, server action with `requireAdmin` + `isThemeKey`,
+   update own school, `revalidatePath("/", "layout")`); apply in root layout via `themeStyle()` on
+   `<html style>` (read with a cookie-less anon client + `unstable_cache`, fall back to
+   `DEFAULT_THEME` if Supabase is not configured or errors); themeColor in `generateViewport`;
+   DB test (check constraint, anon can call `website_theme()`, teacher cannot update); API test;
+   roadmap change-request + decision log entries; browser check.
+   Also done 2026-10-31 (live on main): logo everywhere + icons + share card, address with PIN
+   844506, phones 90979 77171 / 83407 55682, Google Map + directions on Contact,
+   `docs/school/content-checklist.pdf` for the principal (waiting for answers).
+   `docs/school/content-checklist.html` needs `prettier --write`.
+
+## Earlier resume notes (2026-10-27)
 
 1. Ask whether the owner finished `docs/handover/setup-guide.md` (hosted Supabase: 5 migrations in the SQL
    Editor, `supabase/setup/01-school.sql`, sign-ups off, principal via Authentication → Users +
