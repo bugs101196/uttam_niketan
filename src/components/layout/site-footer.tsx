@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { schoolPhones } from "@/lib/school";
+import { schoolMap, schoolPhones } from "@/lib/school";
 import { navLinks } from "./nav-links";
 import { SchoolLogo } from "./school-logo";
 
@@ -16,7 +16,17 @@ export function SiteFooter({ t }: { t: Dictionary }) {
             <p className="text-lg font-bold">{t.meta.siteName}</p>
             <p className="mt-1 text-sm opacity-80">{t.home.eyebrow}</p>
             <address className="mt-2 text-sm not-italic opacity-90">
-              <p>{t.footer.address}</p>
+              <p>
+                {t.footer.address} ·{" "}
+                <a
+                  href={schoolMap.directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block py-2 underline underline-offset-2"
+                >
+                  {t.contact.directions}
+                </a>
+              </p>
               <p className="mt-1">
                 {t.contact.phoneLabel}:{" "}
                 {schoolPhones.map((phone, i) => (

@@ -60,11 +60,15 @@ const en = {
   comingSoon: "This page is being prepared with the school and will be available soon.",
   footer: {
     rights: "All rights reserved.",
-    address: "Deshrajpur, Mahnar, Vaishali, Bihar",
+    address: "Deshrajpur, Mahnar, Vaishali, Bihar 844506",
   },
   contact: {
     addressLabel: "Address",
     phoneLabel: "Phone",
+    mapLabel: "Find us",
+    mapTitle: "Map showing Uttam Niketan school, Deshrajpur, Mahnar",
+    directions: "Get directions",
+    openInMaps: "Open in Google Maps",
   },
   logoAlt: "Uttam Niketan school emblem",
 };
@@ -129,11 +133,15 @@ const hi: Dictionary = {
   comingSoon: "यह पृष्ठ विद्यालय के साथ मिलकर तैयार किया जा रहा है और जल्द उपलब्ध होगा।",
   footer: {
     rights: "सर्वाधिकार सुरक्षित।",
-    address: "देशराजपुर, महनार, वैशाली, बिहार",
+    address: "देशराजपुर, महनार, वैशाली, बिहार 844506",
   },
   contact: {
     addressLabel: "पता",
     phoneLabel: "फ़ोन",
+    mapLabel: "हम तक कैसे पहुँचें",
+    mapTitle: "उत्तम निकेतन विद्यालय, देशराजपुर, महनार का नक्शा",
+    directions: "रास्ता देखें",
+    openInMaps: "गूगल मैप्स में खोलें",
   },
   logoAlt: "उत्तम निकेतन विद्यालय का प्रतीक चिह्न",
 };
