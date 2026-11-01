@@ -58,6 +58,14 @@ const en = {
     gallery: { title: "Gallery", intro: "Photographs of school events and everyday life." },
     contact: { title: "Contact", intro: "Address, phone numbers and office hours." },
   },
+  gallery: {
+    photos: "photos",
+    photoOf: "Photo {n} of {total}",
+    previous: "Previous photo",
+    next: "Next photo",
+    back: "Back to gallery",
+    samples: "These are sample pictures. The school's own photographs will appear here soon.",
+  },
   comingSoon: "This page is being prepared with the school and will be available soon.",
   footer: {
     rights: "All rights reserved.",
@@ -131,6 +139,14 @@ const hi: Dictionary = {
     notices: { title: "सूचनाएँ", intro: "विद्यालय की घोषणाएँ और नई जानकारी।" },
     gallery: { title: "चित्र दीर्घा", intro: "विद्यालय के कार्यक्रमों और रोज़मर्रा की झलकियाँ।" },
     contact: { title: "संपर्क", intro: "पता, फ़ोन नंबर और कार्यालय का समय।" },
+  },
+  gallery: {
+    photos: "चित्र",
+    photoOf: "चित्र {n} / {total}",
+    previous: "पिछला चित्र",
+    next: "अगला चित्र",
+    back: "चित्र दीर्घा पर वापस",
+    samples: "ये नमूना चित्र हैं। विद्यालय के अपने चित्र जल्द ही यहाँ दिखाई देंगे।",
   },
   comingSoon: "यह पृष्ठ विद्यालय के साथ मिलकर तैयार किया जा रहा है और जल्द उपलब्ध होगा।",
   footer: {
