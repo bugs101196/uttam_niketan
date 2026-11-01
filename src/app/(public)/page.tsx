@@ -39,8 +39,8 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="animate-rise-delayed mx-auto shrink-0 rounded-[2rem] bg-white p-4 shadow-lg md:mx-0">
-            <SchoolLogo size={220} alt={t.logoAlt} priority />
+          <div className="animate-rise-delayed mx-auto shrink-0 drop-shadow-2xl md:mx-0">
+            <SchoolLogo size={260} alt={t.logoAlt} priority />
           </div>
         </div>
       </section>

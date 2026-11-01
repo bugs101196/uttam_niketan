@@ -9,8 +9,8 @@ export function SiteFooter({ t }: { t: Dictionary }) {
     <footer className="mt-16 bg-brand-strong text-brand-contrast">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2">
         <div className="flex gap-4">
-          <div className="self-start rounded-full bg-white p-1">
-            <SchoolLogo size={64} />
+          <div className="self-start">
+            <SchoolLogo size={72} />
           </div>
           <div>
             <p className="text-lg font-bold">{t.meta.siteName}</p>
