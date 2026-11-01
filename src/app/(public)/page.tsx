@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { PlaceholderBanner } from "@/components/layout/placeholder-banner";
 import { SchoolLogo } from "@/components/layout/school-logo";
 import { NoticeCard } from "@/components/notice-card";
+import { albums } from "@/content/gallery";
 import { formatNoticeDate, highlightedNotices, notices } from "@/content/notices";
 import { getI18n } from "@/i18n/server";
 
@@ -10,6 +12,9 @@ export default async function HomePage() {
   const home = t.home;
   const important = highlightedNotices();
   const latest = notices.slice(0, 3);
+  const photos = albums
+    .flatMap((album) => album.photos.map((photo, i) => ({ photo, href: `/gallery/${album.id}/${i + 1}` })))
+    .slice(0, 4);
 
   return (
     <>
@@ -73,6 +78,34 @@ export default async function HomePage() {
           ))}
         </ul>
       </section>
+
+      {photos.length > 0 ? (
+        <section className="reveal mx-auto max-w-6xl px-4 pb-12" aria-labelledby="school-life">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+            <h2 id="school-life" className="text-2xl font-bold text-brand">
+              {home.galleryTitle}
+            </h2>
+            <Link href="/gallery" className="flex min-h-11 items-center font-semibold text-brand hover:underline">
+              {home.viewGallery} →
+            </Link>
+          </div>
+          <ul className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {photos.map(({ photo, href }) => (
+              <li key={href}>
+                <Link href={href} className="group block overflow-hidden rounded-xl">
+                  <Image
+                    src={photo.image}
+                    alt={photo.alt[locale]}
+                    placeholder="blur"
+                    sizes="(min-width: 1024px) 280px, 50vw"
+                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105 group-focus-visible:scale-105"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="reveal mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-2">
         <div className="rounded-xl bg-accent-soft p-6">

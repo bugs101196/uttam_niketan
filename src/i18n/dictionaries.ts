@@ -65,6 +65,8 @@ const en = {
     noticesTitle: "Latest notices",
     noticesEmpty: "Notices from the school will appear here.",
     importantNotice: "Important notice",
+    galleryTitle: "Glimpses of school life",
+    viewGallery: "View gallery",
     viewAllNotices: "All notices",
   },
   pages: {
@@ -170,6 +172,8 @@ const hi: Dictionary = {
     noticesTitle: "नई सूचनाएँ",
     noticesEmpty: "विद्यालय की सूचनाएँ यहाँ दिखाई देंगी।",
     importantNotice: "महत्वपूर्ण सूचना",
+    galleryTitle: "विद्यालय जीवन की झलकियाँ",
+    viewGallery: "चित्र दीर्घा देखें",
     viewAllNotices: "सभी सूचनाएँ",
   },
   pages: {

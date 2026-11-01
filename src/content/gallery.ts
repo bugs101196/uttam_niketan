@@ -1,14 +1,12 @@
 import type { StaticImageData } from "next/image";
 import type { Locale } from "@/i18n/config";
-import sample1 from "@/assets/gallery/sample/sample-1.jpg";
-import sample2 from "@/assets/gallery/sample/sample-2.jpg";
-import sample3 from "@/assets/gallery/sample/sample-3.jpg";
-import sample4 from "@/assets/gallery/sample/sample-4.jpg";
-import sample5 from "@/assets/gallery/sample/sample-5.jpg";
-import sample6 from "@/assets/gallery/sample/sample-6.jpg";
-import sample7 from "@/assets/gallery/sample/sample-7.jpg";
+import fireSafetyPoster from "@/assets/gallery/school-life/fire-safety-poster.jpg";
+import fireSafetyStudents from "@/assets/gallery/school-life/fire-safety-students.jpg";
+import fireSafetyTalk from "@/assets/gallery/school-life/fire-safety-talk.jpg";
+import morningAssembly from "@/assets/gallery/school-life/morning-assembly.jpg";
+import resultDay from "@/assets/gallery/school-life/result-day.jpg";
 
-// Photo albums shown on the public website, newest first. Add a school photo
+// Photo albums shown on the public website, in display order. Add a school photo
 // by copying it into src/assets/gallery/<album>/ and listing it here with a
 // description in both languages. Only school-approved photos; identifiable
 // children only with guardian permission (roadmap §16).
@@ -20,36 +18,50 @@ export interface GalleryPhoto {
 
 export interface GalleryAlbum {
   id: string; // used in the photo page URL
-  date: string; // YYYY-MM-DD
+  date?: string; // YYYY-MM-DD, when known
   title: Record<Locale, string>;
   photos: GalleryPhoto[];
   sample?: boolean; // placeholder album, replaced when the school sends photos
 }
 
-const sample = (image: StaticImageData, en: string, hi: string): GalleryPhoto => ({ image, alt: { en, hi } });
+const photo = (image: StaticImageData, en: string, hi: string): GalleryPhoto => ({ image, alt: { en, hi } });
 
 export const albums: GalleryAlbum[] = [
   {
-    id: "sample-events",
-    date: "2026-10-15",
-    sample: true,
-    title: { en: "School events (sample)", hi: "विद्यालय के कार्यक्रम (नमूना)" },
+    id: "school-life",
+    title: { en: "School life", hi: "विद्यालय की झलकियाँ" },
     photos: [
-      sample(sample4, "Sample photo: morning assembly", "नमूना चित्र: प्रार्थना सभा"),
-      sample(sample5, "Sample photo: sports day", "नमूना चित्र: खेल दिवस"),
-      sample(sample6, "Sample photo: annual function", "नमूना चित्र: वार्षिक समारोह"),
-      sample(sample7, "Sample photo: cultural programme", "नमूना चित्र: सांस्कृतिक कार्यक्रम"),
+      photo(
+        morningAssembly,
+        "Students in uniform lined up for the morning assembly",
+        "प्रार्थना सभा के लिए पंक्ति में खड़े विद्यार्थी",
+      ),
+      photo(
+        resultDay,
+        "Students celebrating with their result cards",
+        "अपने परीक्षा परिणाम के साथ खुशी मनाते विद्यार्थी",
+      ),
     ],
   },
   {
-    id: "sample-campus",
-    date: "2026-09-01",
-    sample: true,
-    title: { en: "Our campus (sample)", hi: "हमारा विद्यालय परिसर (नमूना)" },
+    id: "fire-safety-awareness",
+    title: { en: "Fire safety awareness programme", hi: "अग्नि सुरक्षा जागरूकता कार्यक्रम" },
     photos: [
-      sample(sample1, "Sample photo: school building", "नमूना चित्र: विद्यालय भवन"),
-      sample(sample2, "Sample photo: classroom", "नमूना चित्र: कक्षा"),
-      sample(sample3, "Sample photo: school garden", "नमूना चित्र: विद्यालय का बगीचा"),
+      photo(
+        fireSafetyTalk,
+        "Fire service officers speaking to students about fire safety",
+        "अग्निशमन अधिकारी विद्यार्थियों को अग्नि सुरक्षा के बारे में बताते हुए",
+      ),
+      photo(
+        fireSafetyPoster,
+        "An officer showing students the Bihar Fire Service safety poster with emergency numbers 101 and 112",
+        "बिहार अग्निशमन सेवा का सुरक्षा पोस्टर और आपातकालीन नंबर 101 व 112 दिखाते अधिकारी",
+      ),
+      photo(
+        fireSafetyStudents,
+        "Students listening to the fire safety talk",
+        "अग्नि सुरक्षा की जानकारी ध्यान से सुनते विद्यार्थी",
+      ),
     ],
   },
 ];

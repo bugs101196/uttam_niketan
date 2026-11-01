@@ -28,8 +28,12 @@ export default async function GalleryPage() {
               {album.title[locale]}
             </h2>
             <p className="text-muted">
-              <time dateTime={album.date}>{formatNoticeDate(album.date, locale)}</time> · {album.photos.length}{" "}
-              {t.gallery.photos}
+              {album.date ? (
+                <>
+                  <time dateTime={album.date}>{formatNoticeDate(album.date, locale)}</time> ·{" "}
+                </>
+              ) : null}
+              {album.photos.length} {t.gallery.photos}
             </p>
           </div>
           <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
