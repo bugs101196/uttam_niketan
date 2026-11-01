@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { PlaceholderBanner } from "@/components/layout/placeholder-banner";
 import { SchoolLogo } from "@/components/layout/school-logo";
+import { NoticeCard } from "@/components/notice-card";
+import { formatNoticeDate, highlightedNotices, notices } from "@/content/notices";
 import { getI18n } from "@/i18n/server";
 
 export default async function HomePage() {
-  const { t } = await getI18n();
+  const { locale, t } = await getI18n();
   const home = t.home;
+  const important = highlightedNotices();
+  const latest = notices.slice(0, 3);
 
   return (
     <>
@@ -35,6 +39,22 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {important.length > 0 ? (
+        <section aria-labelledby="important-notice" className="mx-auto max-w-6xl px-4 pt-8">
+          <h2
+            id="important-notice"
+            className="inline-block rounded-t-lg bg-accent px-4 py-1.5 text-sm font-bold tracking-wide text-foreground uppercase"
+          >
+            {home.importantNotice}
+          </h2>
+          <div className="space-y-4 rounded-b-xl rounded-tr-xl border-2 border-accent">
+            {important.map((notice) => (
+              <NoticeCard key={notice.id} notice={notice} locale={locale} headingLevel={3} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <div className="mx-auto max-w-6xl px-4 pt-6">
         <PlaceholderBanner>{t.placeholderNotice}</PlaceholderBanner>
@@ -66,7 +86,22 @@ export default async function HomePage() {
               {home.viewAllNotices} →
             </Link>
           </div>
-          <p className="mt-2 text-muted">{home.noticesEmpty}</p>
+          {latest.length === 0 ? (
+            <p className="mt-2 text-muted">{home.noticesEmpty}</p>
+          ) : (
+            <ul className="mt-2 divide-y divide-border">
+              {latest.map((notice) => (
+                <li key={notice.id} className="py-3">
+                  <Link href="/notices" className="block hover:underline">
+                    <span className="block text-sm text-muted">
+                      <time dateTime={notice.date}>{formatNoticeDate(notice.date, locale)}</time>
+                    </span>
+                    <span className="font-semibold">{notice.title[locale]}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
     </>

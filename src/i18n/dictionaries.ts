@@ -47,6 +47,7 @@ const en = {
     classes: "Nursery, LKG, UKG and Classes 1 to 8",
     noticesTitle: "Latest notices",
     noticesEmpty: "Notices from the school will appear here.",
+    importantNotice: "Important notice",
     viewAllNotices: "All notices",
   },
   pages: {
@@ -120,6 +121,7 @@ const hi: Dictionary = {
     classes: "नर्सरी, एलकेजी, यूकेजी और कक्षा 1 से 8",
     noticesTitle: "नई सूचनाएँ",
     noticesEmpty: "विद्यालय की सूचनाएँ यहाँ दिखाई देंगी।",
+    importantNotice: "महत्वपूर्ण सूचना",
     viewAllNotices: "सभी सूचनाएँ",
   },
   pages: {
