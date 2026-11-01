@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { schoolMap, schoolPhones } from "@/lib/school";
+import { schoolEmail, schoolMap, schoolPhones } from "@/lib/school";
 import { navLinks } from "./nav-links";
 import { SchoolLogo } from "./school-logo";
 
@@ -37,6 +37,15 @@ export function SiteFooter({ t }: { t: Dictionary }) {
                     </a>
                   </span>
                 ))}
+              </p>
+              <p>
+                {t.contact.emailLabel}:{" "}
+                <a
+                  href={`mailto:${schoolEmail}`}
+                  className="inline-block py-2 break-all underline-offset-2 hover:underline"
+                >
+                  {schoolEmail}
+                </a>
               </p>
             </address>
           </div>

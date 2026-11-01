@@ -25,6 +25,23 @@ const en = {
     en: "English",
     hi: "हिन्दी",
   },
+  skipToContent: "Skip to main content",
+  announcements: {
+    label: "News",
+    pause: "Pause scrolling news",
+    play: "Resume scrolling news",
+    admissionsSoon: "Admissions for the new session will open soon — contact the school office for details.",
+  },
+  notFound: {
+    title: "Page not found",
+    body: "The page you are looking for does not exist or has moved.",
+    home: "Go to the home page",
+  },
+  error: {
+    title: "Something went wrong",
+    body: "This page could not be loaded. Please try again in a moment.",
+    retry: "Try again",
+  },
   placeholderNotice: "Sample content — this will be replaced with text approved by the school.",
   home: {
     eyebrow: "Nursery to Class 8 · Mahnar, Vaishali",
@@ -66,6 +83,11 @@ const en = {
     back: "Back to gallery",
     samples: "These are sample pictures. The school's own photographs will appear here soon.",
   },
+  admissionsSoon: {
+    title: "Admission process opening soon",
+    body: "Admissions for the new session will open soon. Call the school office to register your interest or ask about classes, dates and documents.",
+    call: "Call",
+  },
   comingSoon: "This page is being prepared with the school and will be available soon.",
   footer: {
     rights: "All rights reserved.",
@@ -74,6 +96,7 @@ const en = {
   contact: {
     addressLabel: "Address",
     phoneLabel: "Phone",
+    emailLabel: "Email",
     mapLabel: "Find us",
     mapTitle: "Map showing Uttam Niketan school, Deshrajpur, Mahnar",
     directions: "Get directions",
@@ -105,6 +128,23 @@ const hi: Dictionary = {
     label: "भाषा",
     en: "English",
     hi: "हिन्दी",
+  },
+  skipToContent: "मुख्य सामग्री पर जाएँ",
+  announcements: {
+    label: "समाचार",
+    pause: "चलते समाचार रोकें",
+    play: "चलते समाचार फिर से चलाएँ",
+    admissionsSoon: "नए सत्र के लिए प्रवेश प्रक्रिया जल्द शुरू होगी — जानकारी के लिए विद्यालय कार्यालय से संपर्क करें।",
+  },
+  notFound: {
+    title: "पृष्ठ नहीं मिला",
+    body: "आप जो पृष्ठ ढूँढ रहे हैं वह मौजूद नहीं है या हटा दिया गया है।",
+    home: "मुख्य पृष्ठ पर जाएँ",
+  },
+  error: {
+    title: "कुछ गड़बड़ हो गई",
+    body: "यह पृष्ठ लोड नहीं हो सका। कृपया थोड़ी देर बाद फिर से प्रयास करें।",
+    retry: "फिर से प्रयास करें",
   },
   placeholderNotice: "नमूना सामग्री — इसे विद्यालय द्वारा स्वीकृत पाठ से बदला जाएगा।",
   home: {
@@ -148,6 +188,11 @@ const hi: Dictionary = {
     back: "चित्र दीर्घा पर वापस",
     samples: "ये नमूना चित्र हैं। विद्यालय के अपने चित्र जल्द ही यहाँ दिखाई देंगे।",
   },
+  admissionsSoon: {
+    title: "प्रवेश प्रक्रिया जल्द शुरू होगी",
+    body: "नए सत्र के लिए प्रवेश प्रक्रिया जल्द शुरू होगी। कक्षाओं, तिथियों और आवश्यक दस्तावेज़ों की जानकारी के लिए विद्यालय कार्यालय को फ़ोन करें।",
+    call: "फ़ोन करें",
+  },
   comingSoon: "यह पृष्ठ विद्यालय के साथ मिलकर तैयार किया जा रहा है और जल्द उपलब्ध होगा।",
   footer: {
     rights: "सर्वाधिकार सुरक्षित।",
@@ -156,6 +201,7 @@ const hi: Dictionary = {
   contact: {
     addressLabel: "पता",
     phoneLabel: "फ़ोन",
+    emailLabel: "ईमेल",
     mapLabel: "हम तक कैसे पहुँचें",
     mapTitle: "उत्तम निकेतन विद्यालय, देशराजपुर, महनार का नक्शा",
     directions: "रास्ता देखें",

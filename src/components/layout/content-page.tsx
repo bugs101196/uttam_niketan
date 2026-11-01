@@ -16,7 +16,7 @@ export async function ContentPage({ page }: { page: PageKey }) {
   const { title, intro } = t.pages[page];
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold text-brand sm:text-4xl">{title}</h1>
+      <h1 className="animate-rise text-3xl font-bold text-brand sm:text-4xl">{title}</h1>
       <p className="mt-3 text-lg text-muted">{intro}</p>
       <div className="mt-8">
         <PlaceholderBanner>{t.comingSoon}</PlaceholderBanner>

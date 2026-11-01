@@ -15,7 +15,7 @@ export default async function HomePage() {
     <>
       <section className="bg-brand text-brand-contrast">
         <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-14 sm:py-20 md:flex-row md:items-center md:justify-between">
-          <div>
+          <div className="animate-rise">
             <p className="text-sm font-semibold tracking-wide text-accent uppercase">{home.eyebrow}</p>
             <h1 className="mt-3 text-4xl font-bold sm:text-5xl">{home.title}</h1>
             <p className="mt-4 max-w-2xl text-lg opacity-90 sm:text-xl">{home.tagline}</p>
@@ -34,7 +34,7 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="mx-auto shrink-0 rounded-[2rem] bg-white p-4 shadow-lg md:mx-0">
+          <div className="animate-rise-delayed mx-auto shrink-0 rounded-[2rem] bg-white p-4 shadow-lg md:mx-0">
             <SchoolLogo size={220} alt={t.logoAlt} priority />
           </div>
         </div>
@@ -48,9 +48,9 @@ export default async function HomePage() {
           >
             {home.importantNotice}
           </h2>
-          <div className="space-y-4 rounded-b-xl rounded-tr-xl border-2 border-accent">
+          <div className="divide-y divide-border rounded-b-xl rounded-tr-xl border-2 border-accent bg-surface">
             {important.map((notice) => (
-              <NoticeCard key={notice.id} notice={notice} locale={locale} headingLevel={3} />
+              <NoticeCard key={notice.id} notice={notice} locale={locale} headingLevel={3} framed={false} />
             ))}
           </div>
         </section>
@@ -60,7 +60,7 @@ export default async function HomePage() {
         <PlaceholderBanner>{t.placeholderNotice}</PlaceholderBanner>
       </div>
 
-      <section className="mx-auto max-w-6xl px-4 py-12" aria-labelledby="highlights">
+      <section className="reveal mx-auto max-w-6xl px-4 py-12" aria-labelledby="highlights">
         <h2 id="highlights" className="text-2xl font-bold text-brand">
           {home.highlightsTitle}
         </h2>
@@ -74,7 +74,7 @@ export default async function HomePage() {
         </ul>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-2">
+      <section className="reveal mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-2">
         <div className="rounded-xl bg-accent-soft p-6">
           <h2 className="text-xl font-bold text-brand">{home.classesTitle}</h2>
           <p className="mt-2 text-lg">{home.classes}</p>

@@ -42,3 +42,87 @@ html[lang="hi"] body {
 summary::-webkit-details-marker {
   display: none;
 }
+
+/* Focus: a dark ring with a white halo, visible on light pages and on the
+   brand-coloured hero and footer alike (WCAG 2.4.7 / 1.4.11). */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px #ffffff;
+}
+
+/* Text fields show focus for mouse users too. */
+:where(input, select, textarea):focus {
+  border-color: var(--brand);
+  outline: 2px solid var(--brand);
+  outline-offset: 0;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Motion. Small, quick and purposeful; switched off for visitors who ask for
+   reduced motion (see the media query above). */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise-in 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.animate-rise-delayed {
+  animation: rise-in 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+}
+
+/* Sections fade up as they scroll into view, in browsers that support
+   scroll-driven animations; elsewhere they simply appear. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: rise-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
+/* Announcement strip: the text scrolls right to left. The track holds the
+   items twice so the loop has no gap. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee var(--marquee-duration, 30s) linear infinite;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track,
+.marquee[data-paused="true"] .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

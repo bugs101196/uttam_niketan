@@ -1,7 +1,7 @@
 import { contentPageMetadata } from "@/components/layout/content-page";
 import { PlaceholderBanner } from "@/components/layout/placeholder-banner";
 import { getI18n } from "@/i18n/server";
-import { schoolMap, schoolPhones } from "@/lib/school";
+import { schoolEmail, schoolMap, schoolPhones } from "@/lib/school";
 
 export const generateMetadata = () => contentPageMetadata("contact");
 
@@ -33,6 +33,15 @@ export default async function ContactPage() {
               </li>
             ))}
           </ul>
+        </div>
+        <div className="rounded-xl border border-border bg-surface p-5 sm:col-span-2">
+          <h2 className="font-semibold text-brand">{t.contact.emailLabel}</h2>
+          <a
+            href={`mailto:${schoolEmail}`}
+            className="mt-2 flex min-h-11 items-center text-lg font-semibold break-all text-brand underline-offset-2 hover:underline"
+          >
+            {schoolEmail}
+          </a>
         </div>
       </address>
 

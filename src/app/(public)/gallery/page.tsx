@@ -22,7 +22,7 @@ export default async function GalleryPage() {
       ) : null}
 
       {albums.map((album) => (
-        <section key={album.id} aria-labelledby={`album-${album.id}`} className="mt-10">
+        <section key={album.id} aria-labelledby={`album-${album.id}`} className="reveal mt-10">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <h2 id={`album-${album.id}`} className="text-2xl font-bold text-brand">
               {album.title[locale]}
@@ -44,7 +44,7 @@ export default async function GalleryPage() {
                     alt={photo.alt[locale]}
                     placeholder="blur"
                     sizes="(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw"
-                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-105 group-focus-visible:scale-105"
                   />
                 </Link>
               </li>

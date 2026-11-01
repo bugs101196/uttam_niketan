@@ -8,15 +8,17 @@ export function NoticeCard({
   notice,
   locale,
   headingLevel = 2,
+  framed = true,
 }: {
   notice: Notice;
   locale: Locale;
   headingLevel?: 2 | 3;
+  framed?: boolean; // false when the parent already draws the frame
 }) {
   const other: Locale = locale === "hi" ? "en" : "hi";
   const Heading = headingLevel === 2 ? "h2" : "h3";
   return (
-    <article className="rounded-xl border border-border bg-surface p-5">
+    <article className={framed ? "rounded-xl border border-border bg-surface p-5" : "p-5"}>
       <p className="text-sm font-semibold text-muted">
         <time dateTime={notice.date}>{formatNoticeDate(notice.date, locale)}</time>
       </p>

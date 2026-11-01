@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SchoolLogo } from "@/components/layout/school-logo";
+import { SkipLink } from "@/components/layout/skip-link";
 import { signOut } from "@/app/(auth)/login/actions";
 import { requireStaff } from "@/lib/auth/staff";
 import { DashboardNav } from "./dashboard-nav";
@@ -17,6 +18,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="min-h-dvh">
+      <SkipLink label="Skip to main content" />
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <Link href="/dashboard" className="flex min-h-11 items-center gap-2 font-bold text-brand">
@@ -40,7 +42,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </div>
         <DashboardNav role={staff.role} />
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+      <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-4 py-6 focus:outline-none">
+        {children}
+      </main>
     </div>
   );
 }

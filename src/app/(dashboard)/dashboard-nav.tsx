@@ -17,8 +17,8 @@ const items: { href: string; label: string; roles: StaffRole[] }[] = [
 export function DashboardNav({ role }: { role: StaffRole }) {
   const pathname = usePathname();
   return (
-    <nav aria-label="Staff" className="mx-auto max-w-6xl overflow-x-auto px-2">
-      <ul className="flex gap-1">
+    <nav aria-label="Staff" className="mx-auto max-w-6xl px-2">
+      <ul className="flex flex-wrap gap-x-1">
         {items
           .filter((item) => item.roles.includes(role))
           .map((item) => {
@@ -28,7 +28,7 @@ export function DashboardNav({ role }: { role: StaffRole }) {
                 <Link
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={`flex min-h-11 items-center border-b-2 px-3 font-medium whitespace-nowrap ${
+                  className={`flex min-h-11 items-center border-b-2 px-2.5 font-medium whitespace-nowrap sm:px-3 ${
                     active ? "border-brand text-brand" : "border-transparent text-muted hover:text-foreground"
                   }`}
                 >

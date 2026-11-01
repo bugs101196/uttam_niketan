@@ -37,16 +37,24 @@ export default async function DashboardPage() {
 
       <TodayAttendance />
 
-      <ul className="mt-6 grid gap-4 sm:grid-cols-3">
+      <ul className="mt-6 grid grid-cols-3 divide-x divide-border rounded-xl border border-border bg-surface">
         {stats.map((stat) => (
-          <li key={stat.label} className="rounded-xl border border-border bg-surface p-5">
+          <li key={stat.label} className="p-4 sm:p-5">
             <p className="text-sm text-muted">{stat.label}</p>
-            <p className="mt-1 text-3xl font-bold">{stat.value}</p>
             {stat.href ? (
-              <Link href={stat.href} className="mt-2 inline-flex min-h-11 items-center font-semibold text-brand">
-                View →
+              <Link
+                href={stat.href}
+                className="mt-1 inline-flex min-h-11 items-center gap-1 text-3xl font-bold text-foreground hover:text-brand"
+              >
+                {stat.value}
+                <span className="sr-only">— view {stat.label.toLowerCase()}</span>
+                <span aria-hidden className="text-base text-brand">
+                  →
+                </span>
               </Link>
-            ) : null}
+            ) : (
+              <p className="mt-1 flex min-h-11 items-center text-3xl font-bold">{stat.value}</p>
+            )}
           </li>
         ))}
       </ul>

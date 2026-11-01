@@ -1,10 +1,10 @@
-import type { ComponentProps, ReactNode } from "react";
+import { cloneElement, isValidElement, type ComponentProps, type ReactElement, type ReactNode } from "react";
 
 // Small set of accessible, large-tap-target form primitives for the staff app.
 
 const control =
   "block min-h-12 w-full rounded-lg border border-border bg-surface px-3 text-base text-foreground " +
-  "focus:border-brand focus:outline-2 focus:outline-brand/30 aria-[invalid=true]:border-red-600";
+  "aria-[invalid=true]:border-red-600";
 
 export function Field({
   label,
@@ -19,12 +19,18 @@ export function Field({
   hint?: string;
   children: ReactNode;
 }) {
+  // Connect the hint or error text to the control so screen readers announce it.
+  const describedBy = error ? `${htmlFor}-error` : hint ? `${htmlFor}-hint` : undefined;
+  const control =
+    describedBy && isValidElement(children)
+      ? cloneElement(children as ReactElement<{ "aria-describedby"?: string }>, { "aria-describedby": describedBy })
+      : children;
   return (
     <div>
       <label htmlFor={htmlFor} className="mb-1 block font-medium">
         {label}
       </label>
-      {children}
+      {control}
       {hint && !error ? (
         <p id={`${htmlFor}-hint`} className="mt-1 text-sm text-muted">
           {hint}
