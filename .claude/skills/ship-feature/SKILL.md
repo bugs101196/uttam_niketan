@@ -56,3 +56,9 @@ Merging to `main` and pushing deploys production. Then poll Vercel (`list_deploy
 `uttam_niketan`, then `list_deployment_events`) until the deployment is READY and owns the
 `uttamniketan.vercel.app` alias, and tell the user to hard-refresh. A new migration also has to be
 added to `docs/handover/setup-guide.md` and run by the owner in the hosted Supabase SQL Editor.
+
+Pushing any branch also builds a Vercel preview at
+`https://uttamniketan-git-<branch>-aksundram44-9592s-projects.vercel.app` (needs a Vercel login);
+use it when the owner asks to "deploy for review". Hobby builds run one at a time, so production can
+sit QUEUED behind a preview. If a build fails in `next/font`, check the Node version in the build log
+(`engines.node` must stay `22.x`).
