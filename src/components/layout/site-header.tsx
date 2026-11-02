@@ -3,6 +3,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { LanguageSwitch } from "./language-switch";
 import { SchoolLogo } from "./school-logo";
+import { SchoolPlace } from "./school-place";
 import { CloseOnNavigate, NavLinkList } from "./nav-link-list";
 import { navLinks } from "./nav-links";
 
@@ -17,10 +18,9 @@ export function SiteHeader({ locale, t }: { locale: Locale; t: Dictionary }) {
           <SchoolLogo size={44} priority />
           <span className="flex flex-col leading-tight">
             <span className="text-lg font-bold text-brand">{t.meta.siteName}</span>
-            <span className="flex flex-col text-xs text-muted sm:flex-row sm:gap-1">
-              <span>{t.meta.place}</span>
-              <span aria-hidden className="hidden sm:inline">
-                ·
+            <span className="flex flex-col text-xs text-muted">
+              <span>
+                <SchoolPlace place={t.meta.place} />
               </span>
               <span>{t.meta.classRange}</span>
             </span>

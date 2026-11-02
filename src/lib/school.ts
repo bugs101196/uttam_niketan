@@ -4,6 +4,8 @@ export const schoolPhones = [
   { display: "83407 55682", tel: "+918340755682" },
 ] as const;
 
+export const schoolPin = "844506";
+
 export const schoolEmail = "uttamniketan004@gmail.com";
 
 // Location from the school's Google Maps listing.

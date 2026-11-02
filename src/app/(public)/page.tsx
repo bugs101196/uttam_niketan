@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PlaceholderBanner } from "@/components/layout/placeholder-banner";
 import { SchoolLogo } from "@/components/layout/school-logo";
+import { SchoolPlace } from "@/components/layout/school-place";
 import { NoticeCard } from "@/components/notice-card";
 import { albums } from "@/content/gallery";
 import { formatNoticeDate, highlightedNotices, notices } from "@/content/notices";
@@ -22,7 +23,9 @@ export default async function HomePage() {
         <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-14 sm:py-20 md:flex-row md:items-center md:justify-between">
           <div className="animate-rise">
             <h1 className="text-4xl font-bold sm:text-5xl">{home.title}</h1>
-            <p className="mt-2 text-xl font-semibold sm:text-2xl">{t.meta.place}</p>
+            <p className="mt-2 text-xl font-semibold sm:text-2xl">
+              <SchoolPlace place={t.meta.place} />
+            </p>
             <p className="mt-3 inline-block rounded-md bg-accent px-3 py-1 font-bold text-foreground">
               {t.meta.classRange}
             </p>
