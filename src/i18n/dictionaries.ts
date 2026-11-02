@@ -6,6 +6,8 @@ import type { Locale } from "./config";
 const en = {
   meta: {
     siteName: "Uttam Niketan",
+    place: "Deshrajpur, Mahnar, Vaishali",
+    classRange: "Class NC to 8",
     description:
       "Uttam Niketan is a school in Deshrajpur, Mahnar (Vaishali, Bihar) for children from Nursery to Class 8.",
   },
@@ -44,7 +46,6 @@ const en = {
   },
   placeholderNotice: "Sample content — this will be replaced with text approved by the school.",
   home: {
-    eyebrow: "Nursery to Class 8 · Mahnar, Vaishali",
     title: "Uttam Niketan",
     // PLACEHOLDER
     tagline: "A caring school where every child learns, grows and belongs.",
@@ -112,6 +113,8 @@ export type Dictionary = typeof en;
 const hi: Dictionary = {
   meta: {
     siteName: "उत्तम निकेतन",
+    place: "देशराजपुर, महनार, वैशाली",
+    classRange: "कक्षा NC से 8",
     description:
       "उत्तम निकेतन देशराजपुर, महनार (वैशाली, बिहार) का एक विद्यालय है, जहाँ नर्सरी से कक्षा 8 तक की पढ़ाई होती है।",
   },
@@ -150,7 +153,6 @@ const hi: Dictionary = {
   },
   placeholderNotice: "नमूना सामग्री — इसे विद्यालय द्वारा स्वीकृत पाठ से बदला जाएगा।",
   home: {
-    eyebrow: "नर्सरी से कक्षा 8 · महनार, वैशाली",
     title: "उत्तम निकेतन",
     tagline: "एक स्नेहपूर्ण विद्यालय, जहाँ हर बच्चा सीखता है, आगे बढ़ता है और अपनापन पाता है।",
     ctaAdmissions: "प्रवेश की जानकारी",

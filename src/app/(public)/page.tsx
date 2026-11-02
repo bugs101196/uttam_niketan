@@ -21,8 +21,11 @@ export default async function HomePage() {
       <section className="bg-brand text-brand-contrast">
         <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-14 sm:py-20 md:flex-row md:items-center md:justify-between">
           <div className="animate-rise">
-            <p className="text-sm font-semibold tracking-wide text-accent uppercase">{home.eyebrow}</p>
-            <h1 className="mt-3 text-4xl font-bold sm:text-5xl">{home.title}</h1>
+            <h1 className="text-4xl font-bold sm:text-5xl">{home.title}</h1>
+            <p className="mt-2 text-xl font-semibold sm:text-2xl">{t.meta.place}</p>
+            <p className="mt-3 inline-block rounded-md bg-accent px-3 py-1 font-bold text-foreground">
+              {t.meta.classRange}
+            </p>
             <p className="mt-4 max-w-2xl text-lg opacity-90 sm:text-xl">{home.tagline}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link

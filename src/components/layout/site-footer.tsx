@@ -14,7 +14,8 @@ export function SiteFooter({ t }: { t: Dictionary }) {
           </div>
           <div>
             <p className="text-lg font-bold">{t.meta.siteName}</p>
-            <p className="mt-1 text-sm opacity-80">{t.home.eyebrow}</p>
+            <p className="mt-1 text-sm opacity-90">{t.meta.place}</p>
+            <p className="text-sm opacity-90">{t.meta.classRange}</p>
             <address className="mt-2 text-sm not-italic opacity-90">
               <p>
                 {t.footer.address} ·{" "}

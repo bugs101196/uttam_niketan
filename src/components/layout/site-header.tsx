@@ -15,7 +15,16 @@ export function SiteHeader({ locale, t }: { locale: Locale; t: Dictionary }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="flex min-h-11 items-center gap-3">
           <SchoolLogo size={44} priority />
-          <span className="text-lg font-bold text-brand">{t.meta.siteName}</span>
+          <span className="flex flex-col leading-tight">
+            <span className="text-lg font-bold text-brand">{t.meta.siteName}</span>
+            <span className="flex flex-col text-xs text-muted sm:flex-row sm:gap-1">
+              <span>{t.meta.place}</span>
+              <span aria-hidden className="hidden sm:inline">
+                ·
+              </span>
+              <span>{t.meta.classRange}</span>
+            </span>
+          </span>
         </Link>
 
         <nav aria-label={t.nav.menu} className="hidden lg:block">
