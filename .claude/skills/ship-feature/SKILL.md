@@ -62,3 +62,7 @@ Pushing any branch also builds a Vercel preview at
 use it when the owner asks to "deploy for review". Hobby builds run one at a time, so production can
 sit QUEUED behind a preview. If a build fails in `next/font`, check the Node version in the build log
 (`engines.node` must stay `22.x`).
+
+Never force-push or rebase pushed branches (the auto-mode classifier blocks it); to bring `main`
+into a feature branch, merge instead. Session notes go on the current feature branch unless the
+owner has asked to merge.

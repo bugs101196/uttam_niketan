@@ -29,12 +29,24 @@ defect register and decision log when milestones change (see the `ship-feature` 
 - **Waiting on the owner:** hosted database setup per `docs/handover/setup-guide.md` (5 migrations, school setup SQL, sign-ups off, principal account) and `CRON_SECRET` in Vercel.
 - **Waiting on the school:** content/logo/address, class & section names, attendance correction rules, late/excused usage and the 75% threshold, required student fields, whether teachers need guardian phones, Hindi staff UI, CSV import, email vs phone login for teachers.
 
-## ▶️ Resume here (as of 2026-11-01)
+## ▶️ Resume here (as of 2026-11-02)
+
+**Waiting to merge:** branch `school-identity` (pushed, not on `main`; these notes live on it too).
+It shows the school identity the owner asked for in the header, home hero and footer, EN + HI:
+"Uttam Niketan / Deshrajpur, Mahnar, Vaishali – 844506 / Class NC to 8" (`meta.place`,
+`meta.classRange` in dictionaries; PIN via `SchoolPlace` + `schoolPin` in `src/lib/school.ts`).
+Merge (fast-forward) when the owner says so.
+
+Open questions for the owner: should "Classes we offer: Nursery, LKG, UKG and Classes 1 to 8" become
+"Class NC to 8"; a Hindi word for "NC" (kept as "NC"). Small fixes offered but not yet done: one
+shared public button style, pending state on the language switch, Chhath notice shown three times on
+the home page, "Nursery to Class 8" left in the meta description and Academics intro, prettier on
+`eslint.config.mjs` / `next.config.ts`. Owner should check the Contact-page map pin on a phone.
 
 Live on `main` (2026-11-01): Chhath Puja notice (EN+HI, home highlight until 16 Nov), gallery with
-the school's 5 real photos (School life; Fire safety awareness), news strip with "admissions opening
-soon", admissions-soon panel, school email, logo in its own shape (no box), UI/UX pass. Routine
-content changes (notices, photos, news strip, contact details) follow the `site-content` skill.
+the school's 5 real photos, news strip with "admissions opening soon", admissions-soon panel,
+school email, logo in its own shape, UI/UX pass. Routine content changes follow the
+`site-content` skill.
 
 1. **Ask the owner:** guardian permission for photos showing children's faces (roadmap §16); the
    sharper Gemini logo as an attached file (its checkerboard background is baked in and needs
