@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { PlaceholderBanner } from "@/components/layout/placeholder-banner";
 import { SchoolLogo } from "@/components/layout/school-logo";
 import { NoticeCard } from "@/components/notice-card";
 import { albums } from "@/content/gallery";
@@ -60,10 +59,6 @@ export default async function HomePage() {
           </div>
         </section>
       ) : null}
-
-      <div className="mx-auto max-w-6xl px-4 pt-6">
-        <PlaceholderBanner>{t.placeholderNotice}</PlaceholderBanner>
-      </div>
 
       <section className="reveal mx-auto max-w-6xl px-4 py-12" aria-labelledby="highlights">
         <h2 id="highlights" className="text-2xl font-bold text-brand">

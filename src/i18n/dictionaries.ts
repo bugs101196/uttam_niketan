@@ -42,7 +42,6 @@ const en = {
     body: "This page could not be loaded. Please try again in a moment.",
     retry: "Try again",
   },
-  placeholderNotice: "Sample content — this will be replaced with text approved by the school.",
   home: {
     eyebrow: "Nursery to Class 8 · Mahnar, Vaishali",
     title: "Uttam Niketan",
@@ -148,7 +147,6 @@ const hi: Dictionary = {
     body: "यह पृष्ठ लोड नहीं हो सका। कृपया थोड़ी देर बाद फिर से प्रयास करें।",
     retry: "फिर से प्रयास करें",
   },
-  placeholderNotice: "नमूना सामग्री — इसे विद्यालय द्वारा स्वीकृत पाठ से बदला जाएगा।",
   home: {
     eyebrow: "नर्सरी से कक्षा 8 · महनार, वैशाली",
     title: "उत्तम निकेतन",
