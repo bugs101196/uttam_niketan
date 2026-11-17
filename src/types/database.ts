@@ -254,6 +254,85 @@ export type Database = {
           },
         ];
       };
+      guardian_students: {
+        Row: {
+          created_at: string;
+          guardian_id: string;
+          relationship: string | null;
+          student_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          guardian_id: string;
+          relationship?: string | null;
+          student_id: string;
+        };
+        Update: {
+          created_at?: string;
+          guardian_id?: string;
+          relationship?: string | null;
+          student_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "guardian_students_guardian_id_fkey";
+            columns: ["guardian_id"];
+            isOneToOne: false;
+            referencedRelation: "guardians";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "guardian_students_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      guardians: {
+        Row: {
+          created_at: string;
+          full_name: string;
+          id: string;
+          is_active: boolean;
+          phone: string;
+          preferred_language: Database["public"]["Enums"]["app_language"];
+          school_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          full_name: string;
+          id: string;
+          is_active?: boolean;
+          phone: string;
+          preferred_language?: Database["public"]["Enums"]["app_language"];
+          school_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          full_name?: string;
+          id?: string;
+          is_active?: boolean;
+          phone?: string;
+          preferred_language?: Database["public"]["Enums"]["app_language"];
+          school_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "guardians_school_id_fkey";
+            columns: ["school_id"];
+            isOneToOne: false;
+            referencedRelation: "schools";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       notification_jobs: {
         Row: {
           attempts: number;
