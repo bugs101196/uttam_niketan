@@ -4,7 +4,7 @@ import { z } from "zod";
 export const newStaffSchema = z.object({
   full_name: z.string().trim().min(2, "Full name is required").max(100, "Full name must be at most 100 characters"),
   email: z.string().trim().toLowerCase().email("Enter a valid email address"),
-  role: z.enum(["teacher", "admin"], { message: "Choose a role" }),
+  role: z.enum(["teacher", "admin", "office"], { message: "Choose a role" }),
 });
 
 export const assignmentSchema = z.object({

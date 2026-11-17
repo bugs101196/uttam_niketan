@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
-export type StaffRole = "admin" | "teacher";
+export type StaffRole = "admin" | "teacher" | "office";
 
 export interface Staff {
   id: string;
