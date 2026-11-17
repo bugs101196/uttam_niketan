@@ -1,5 +1,4 @@
 import { contentPageMetadata } from "@/components/layout/content-page";
-import { PlaceholderBanner } from "@/components/layout/placeholder-banner";
 import { getI18n } from "@/i18n/server";
 import { schoolEmail, schoolMap, schoolPhones } from "@/lib/school";
 
@@ -77,10 +76,6 @@ export default async function ContactPage() {
           </a>
         </div>
       </section>
-
-      <div className="mt-8">
-        <PlaceholderBanner>{t.comingSoon}</PlaceholderBanner>
-      </div>
     </div>
   );
 }
