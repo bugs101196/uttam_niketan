@@ -1,17 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isProtectedPath } from "@/lib/auth/paths";
+import { isParentProtectedPath, isProtectedPath } from "@/lib/auth/paths";
 import { isSupabaseConfigured } from "@/lib/env";
 
 // Refreshes the Supabase session cookie and sends signed-out visitors to the
-// login page. This is a convenience redirect only: every protected page and
-// action still checks the user itself, and RLS guards the data.
+// right login page (staff vs. parent). This is a convenience redirect only:
+// every protected page and action still checks the user itself, and RLS
+// guards the data.
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
   if (!isSupabaseConfigured()) {
-    // Nobody can be signed in yet; the login page explains that staff access is not set up.
-    if (!isProtectedPath(request.nextUrl.pathname)) return NextResponse.next();
+    // Nobody can be signed in yet; the login pages explain that access is not set up.
+    if (!isProtectedPath(pathname) && !isParentProtectedPath(pathname)) return NextResponse.next();
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = isParentProtectedPath(pathname) ? "/parent/login" : "/login";
     url.search = "";
     return NextResponse.redirect(url);
   }
@@ -40,11 +43,11 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && isProtectedPath(request.nextUrl.pathname)) {
+  if (!user && (isProtectedPath(pathname) || isParentProtectedPath(pathname))) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = isParentProtectedPath(pathname) ? "/parent/login" : "/login";
     url.search = "";
-    url.searchParams.set("next", request.nextUrl.pathname + request.nextUrl.search);
+    url.searchParams.set("next", pathname + request.nextUrl.search);
     return NextResponse.redirect(url);
   }
 
@@ -61,5 +64,8 @@ export const config = {
     "/reports/:path*",
     "/staff/:path*",
     "/settings/:path*",
+    "/parent/login",
+    "/parent/dashboard/:path*",
+    "/parent/notices/:path*",
   ],
 };
