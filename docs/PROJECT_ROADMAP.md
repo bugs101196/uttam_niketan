@@ -954,13 +954,13 @@ Update these checkboxes as work progresses.
 
 - [x] Phase 1 — `office` staff role: enum, RLS (`private.is_office_or_admin()`), attendance-marking + school-wide read parity with admin, no financial/settings/staff access. Merged (PR #3), migrations live.
 - [x] Phase 2 — `guardians`/`guardian_students` schema + admin `/parents` management screen (create/link/unlink/disable). No parent-facing UI yet. Merged (PR #4), migrations live.
-- [ ] Phase 3 — Parent OTP login + read-only dashboard (attendance, notices)
+- [x] Phase 3 — Parent OTP login (two-step phone → code, no self-registration) + read-only dashboard (last-60-days attendance per linked child, static notices). Merged (PR #7), migration live. **Not yet end-to-end verified with a real OTP** — blocked on §17 open question 8 (SMS provider not yet configured in the Supabase dashboard).
 - [ ] Phase 4 — Homework module
 - [ ] Phase 5 — Fee schema + cash-only payments (blocked on §17 decisions: gateway choice, office fee-view rights, billing cadence)
 - [ ] Phase 6 — Online payment gateway integration
 - [ ] Phase 7 — Reports extensions (fee-collection, homework completion)
 
-Neither Phase 1 nor Phase 2 has had real RLS verification against the live database yet (sign in as an office-role/guardian-linked-admin account and confirm the access boundaries actually hold) — only migration application was verified. Do that before starting Phase 3.
+Phases 1 and 2 got real RLS verification 2026-11-18 (SQL-level impersonation against the live database, owner-run via the SQL Editor) — found and fixed one real bug along the way (missing `guardian_students` INSERT/DELETE grants, PR #6). Phase 3's RLS (the attendance-policy extension) has not had the same impersonation-test treatment yet — worth doing before Phase 4, same method as Phases 1-2.
 
 ### Week 4 — Integration and launch
 
@@ -1095,6 +1095,8 @@ Record significant decisions and why they were made.
 | 2026-10-26 | CSV student import not built yet                                                                                                                                                                                          | Roadmap marks it "if in accepted scope"; not yet confirmed                                                                                                                              | Pending school confirmation                       |
 | 2026-11-18 | ERP Architecture Phases 1 (`office` role) and 2 (`guardians` schema + admin screen) merged to `main` (PR #3, #4) and their migrations applied to the hosted database                                                     | Both were built and committed in an earlier session but never merged or applied — found via a routine `git branch --no-merged main` check against this doc, which had no record of them | Developer (routine audit)                         |
 | 2026-11-18 | Applying the 3 new migrations required manually reconciling the CLI's remote migration-history table first (`supabase migration repair --status applied` on the 5 original migrations) before `db push` would proceed | The original 5 migrations were applied directly via a raw Postgres script, not `supabase db push`, so the CLI's own bookkeeping never recorded them — confirmed via the Management API (live tables/enum values) before marking anything "applied", to avoid masking a genuinely-missing migration | Developer (technical)                             |
+| 2026-11-18 | Real RLS verification of Phases 1-2 (SQL-level impersonation, owner-run via the SQL Editor) found `guardian_students` had SELECT only, no INSERT/DELETE grant for `authenticated` — the real admin `/parents` screen's "link a child"/"unlink" buttons were broken in production since merge. Fixed (PR #6) | RLS policies for insert/delete were correct but unreachable; a base table GRANT is checked before RLS runs. The feature had never been exercised end-to-end before (built without a local Supabase stack) | Developer (bug found via verification)            |
+| 2026-11-18 | Phase 3 built against the Phase 2 code's actual design (admin-provisioned accounts, `shouldCreateUser: false`), not `docs/ERP_ARCHITECTURE.md` §8.3's self-registration flow | §8.3 predates Phase 2's explicit "no public self-registration" decision (see `createGuardian`'s own comment) — the shipped, more specific decision overrides the earlier planning doc | Developer (resolved doc/code conflict)            |
 
 ---
 
