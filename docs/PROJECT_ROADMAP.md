@@ -922,7 +922,7 @@ Update these checkboxes as work progresses.
 - [ ] School content and class structure collected
 - [ ] Design/wireframes approved
 - [x] Next.js repository set up
-- [x] Supabase development project created (by project owner, 2026-10-26; migrations not yet applied to it)
+- [x] Supabase development project created (by project owner, 2026-10-26; all 8 migrations applied and verified live as of 2026-11-18)
 - [x] Vercel preview configured (production: https://uttamniketan.vercel.app; previews protected by Vercel Authentication)
 - [x] Initial database migration tested (40 automated DB tests on a clean PostgreSQL 16 database)
 - [x] Public website shell navigable (EN/HI switch, mobile menu; placeholder content clearly labelled)
@@ -949,6 +949,18 @@ Update these checkboxes as work progresses.
 - [x] Reports reconcile with persisted data
 - [x] Security/permission regression passed
 - [ ] Week 3 release approved
+
+### Post-MVP — ERP Architecture phases (see `docs/ERP_ARCHITECTURE.md` §18 for the full sequence)
+
+- [x] Phase 1 — `office` staff role: enum, RLS (`private.is_office_or_admin()`), attendance-marking + school-wide read parity with admin, no financial/settings/staff access. Merged (PR #3), migrations live.
+- [x] Phase 2 — `guardians`/`guardian_students` schema + admin `/parents` management screen (create/link/unlink/disable). No parent-facing UI yet. Merged (PR #4), migrations live.
+- [ ] Phase 3 — Parent OTP login + read-only dashboard (attendance, notices)
+- [ ] Phase 4 — Homework module
+- [ ] Phase 5 — Fee schema + cash-only payments (blocked on §17 decisions: gateway choice, office fee-view rights, billing cadence)
+- [ ] Phase 6 — Online payment gateway integration
+- [ ] Phase 7 — Reports extensions (fee-collection, homework completion)
+
+Neither Phase 1 nor Phase 2 has had real RLS verification against the live database yet (sign in as an office-role/guardian-linked-admin account and confirm the access boundaries actually hold) — only migration application was verified. Do that before starting Phase 3.
 
 ### Week 4 — Integration and launch
 
@@ -1081,6 +1093,8 @@ Record significant decisions and why they were made.
 | 2026-10-27 | Classes, sections and academic years managed in Settings → Classes & academic year; switching the active year and copying a year's structure are atomic, audited database functions; deletes refused while history exists | Completes roadmap §4.2 "School profile and academic year setup / Classes and sections", which was missed in Week 2                                                                      | Developer (scope gap closed)                      |
 | 2026-10-27 | Year-end promotion of students is a separate change request                                                                                                                                                               | Moving students between years needs school rules (who is promoted, detained, leaves)                                                                                                    | Pending school confirmation                       |
 | 2026-10-26 | CSV student import not built yet                                                                                                                                                                                          | Roadmap marks it "if in accepted scope"; not yet confirmed                                                                                                                              | Pending school confirmation                       |
+| 2026-11-18 | ERP Architecture Phases 1 (`office` role) and 2 (`guardians` schema + admin screen) merged to `main` (PR #3, #4) and their migrations applied to the hosted database                                                     | Both were built and committed in an earlier session but never merged or applied — found via a routine `git branch --no-merged main` check against this doc, which had no record of them | Developer (routine audit)                         |
+| 2026-11-18 | Applying the 3 new migrations required manually reconciling the CLI's remote migration-history table first (`supabase migration repair --status applied` on the 5 original migrations) before `db push` would proceed | The original 5 migrations were applied directly via a raw Postgres script, not `supabase db push`, so the CLI's own bookkeeping never recorded them — confirmed via the Management API (live tables/enum values) before marking anything "applied", to avoid masking a genuinely-missing migration | Developer (technical)                             |
 
 ---
 
