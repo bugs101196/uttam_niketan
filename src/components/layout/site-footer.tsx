@@ -67,9 +67,14 @@ export function SiteFooter({ t }: { t: Dictionary }) {
           <p>
             © {new Date().getFullYear()} {t.meta.siteName}. {t.footer.rights}
           </p>
-          <Link href="/login" className="flex min-h-11 items-center hover:underline">
-            {t.nav.staffLogin}
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/parent/login" className="flex min-h-11 items-center hover:underline">
+              {t.nav.parentLogin}
+            </Link>
+            <Link href="/login" className="flex min-h-11 items-center hover:underline">
+              {t.nav.staffLogin}
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

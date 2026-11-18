@@ -19,6 +19,7 @@ const en = {
     contact: "Contact",
     menu: "Menu",
     staffLogin: "Staff login",
+    parentLogin: "Parent login",
   },
   language: {
     label: "Language",
@@ -124,6 +125,7 @@ const hi: Dictionary = {
     contact: "संपर्क",
     menu: "मेनू",
     staffLogin: "स्टाफ लॉगिन",
+    parentLogin: "अभिभावक लॉगिन",
   },
   language: {
     label: "भाषा",

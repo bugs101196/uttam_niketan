@@ -1,9 +1,12 @@
 import "server-only";
+import type { Guardian } from "@/lib/auth/guardian";
 import type { Staff } from "@/lib/auth/staff";
 import { createClient } from "@/lib/supabase/server";
 
-// All queries use the signed-in admin's RLS client — guardians_select/
-// guardian_students_select already scope these to the admin's own school.
+// All queries use the signed-in user's RLS client. For an admin,
+// guardians_select/guardian_students_select scope these to their own
+// school. For a guardian (listOwnChildren below), the same client only ever
+// returns their own guardian_students row, via guardian_id = auth.uid().
 
 export interface GuardianListItem {
   id: string;
@@ -41,6 +44,36 @@ export async function listGuardians(admin: Staff): Promise<GuardianListItem[]> {
     preferredLanguage: g.preferred_language,
     isActive: g.is_active,
     children: childrenByGuardian.get(g.id) ?? [],
+  }));
+}
+
+export interface OwnChild {
+  studentId: string;
+  fullName: string;
+  admissionNo: string;
+  className: string;
+  sectionName: string;
+  relationship: string | null;
+}
+
+/** The signed-in guardian's own linked children, for the parent dashboard. */
+export async function listOwnChildren(guardian: Guardian): Promise<OwnChild[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("guardian_students")
+    .select(
+      "relationship, students!inner(id, full_name, admission_no, sections!inner(name, classes!inner(name)))",
+    )
+    .eq("guardian_id", guardian.id);
+  if (error) throw error;
+
+  return (data ?? []).map((link) => ({
+    studentId: link.students.id,
+    fullName: link.students.full_name,
+    admissionNo: link.students.admission_no,
+    className: link.students.sections.classes.name,
+    sectionName: link.students.sections.name,
+    relationship: link.relationship,
   }));
 }
 
