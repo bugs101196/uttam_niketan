@@ -1,4 +1,18 @@
-export const PROTECTED_PREFIXES = ["/dashboard", "/students", "/attendance", "/reports", "/staff", "/settings"];
+export const PROTECTED_PREFIXES = [
+  "/dashboard",
+  "/students",
+  "/attendance",
+  "/reports",
+  "/staff",
+  "/settings",
+  "/homework",
+  // Pre-existing gap found while fixing the one above: /parents (Phase 2's
+  // admin guardians screen) was never added here either, so it's relied
+  // entirely on requireAdmin()'s own redirect rather than the middleware's
+  // edge-level one. Not a security hole (same reasoning as the file's top
+  // comment), but the same class of bug -- fixed alongside it.
+  "/parents",
+];
 
 export function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
@@ -19,7 +33,7 @@ export function safeNextPath(next: unknown): string {
 // Parent portal (Phase 3). Deliberately a separate list, not folded into
 // PROTECTED_PREFIXES above -- a signed-out visitor on a parent path must land
 // on /parent/login, not the staff /login page, and vice versa.
-export const PARENT_PROTECTED_PREFIXES = ["/parent/dashboard", "/parent/notices"];
+export const PARENT_PROTECTED_PREFIXES = ["/parent/dashboard", "/parent/notices", "/parent/homework"];
 
 export function isParentProtectedPath(pathname: string): boolean {
   return PARENT_PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));

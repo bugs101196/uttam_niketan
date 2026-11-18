@@ -53,6 +53,10 @@ export function Select({ invalid, ...props }: ComponentProps<"select"> & { inval
   return <select {...props} aria-invalid={invalid || undefined} className={control} />;
 }
 
+export function Textarea({ invalid, ...props }: ComponentProps<"textarea"> & { invalid?: boolean }) {
+  return <textarea {...props} aria-invalid={invalid || undefined} className={`${control} min-h-24 py-2`} />;
+}
+
 export function Button({
   variant = "primary",
   className = "",

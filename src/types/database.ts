@@ -333,6 +333,68 @@ export type Database = {
           },
         ];
       };
+      homework: {
+        Row: {
+          created_at: string;
+          created_by: string;
+          description_en: string;
+          description_hi: string;
+          due_date: string;
+          id: string;
+          school_id: string;
+          section_id: string;
+          subject: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by: string;
+          description_en: string;
+          description_hi: string;
+          due_date: string;
+          id?: string;
+          school_id: string;
+          section_id: string;
+          subject: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string;
+          description_en?: string;
+          description_hi?: string;
+          due_date?: string;
+          id?: string;
+          school_id?: string;
+          section_id?: string;
+          subject?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "homework_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "homework_school_id_fkey";
+            columns: ["school_id"];
+            isOneToOne: false;
+            referencedRelation: "schools";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "homework_section_id_fkey";
+            columns: ["section_id"];
+            isOneToOne: false;
+            referencedRelation: "sections";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       notification_jobs: {
         Row: {
           attempts: number;
