@@ -8,11 +8,12 @@ import { SessionStatusBadge } from "../attendance/session-status-badge";
 export default async function DashboardPage() {
   const staff = await requireStaff();
   const supabase = await createClient();
+  const schoolWide = staff.role !== "teacher"; // admin and office both see the whole school
 
-  // RLS scopes every count: admins see the school, teachers their sections.
+  // RLS scopes every count: admins/office see the school, teachers their sections.
   const [students, sections, teachers] = await Promise.all([
     supabase.from("students").select("id", { count: "exact", head: true }).eq("enrollment_status", "active"),
-    staff.role === "admin"
+    schoolWide
       ? supabase.from("sections").select("id", { count: "exact", head: true })
       : supabase.from("teacher_assignments").select("id", { count: "exact", head: true }).eq("teacher_id", staff.id),
     staff.role === "admin"
@@ -26,14 +27,14 @@ export default async function DashboardPage() {
 
   const stats = [
     { label: "Active students", value: students.count ?? 0, href: "/students" },
-    { label: staff.role === "admin" ? "Sections" : "My sections", value: sections.count ?? 0 },
+    { label: schoolWide ? "Sections" : "My sections", value: sections.count ?? 0 },
     ...(teachers ? [{ label: "Active teachers", value: teachers.count ?? 0, href: "/staff" }] : []),
   ];
 
   return (
     <div>
       <h1 className="text-2xl font-bold">Namaste, {staff.fullName}</h1>
-      <p className="mt-1 text-muted">{staff.role === "admin" ? "School overview" : "Your classes at a glance"}</p>
+      <p className="mt-1 text-muted">{schoolWide ? "School overview" : "Your classes at a glance"}</p>
 
       <TodayAttendance />
 

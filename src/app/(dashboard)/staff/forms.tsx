@@ -38,6 +38,7 @@ export function AddStaffForm() {
         <Field label="Role" htmlFor="staff_role" error={errors.role}>
           <Select id="staff_role" name="role" defaultValue="teacher">
             <option value="teacher">Teacher</option>
+            <option value="office">Office staff</option>
             <option value="admin">Principal / admin</option>
           </Select>
         </Field>

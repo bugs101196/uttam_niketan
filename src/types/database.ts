@@ -718,7 +718,7 @@ export type Database = {
     };
     Enums: {
       app_language: "en" | "hi";
-      app_role: "admin" | "teacher";
+      app_role: "admin" | "teacher" | "office";
       attendance_session_status: "draft" | "submitted" | "locked";
       attendance_status: "present" | "absent" | "late" | "excused";
       enrollment_status: "active" | "inactive" | "transferred";
@@ -831,7 +831,7 @@ export const Constants = {
   public: {
     Enums: {
       app_language: ["en", "hi"],
-      app_role: ["admin", "teacher"],
+      app_role: ["admin", "teacher", "office"],
       attendance_session_status: ["draft", "submitted", "locked"],
       attendance_status: ["present", "absent", "late", "excused"],
       enrollment_status: ["active", "inactive", "transferred"],
