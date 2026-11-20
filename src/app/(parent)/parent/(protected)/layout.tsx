@@ -28,6 +28,9 @@ export default async function ParentLayout({ children }: { children: React.React
             <Link href="/parent/dashboard" className="min-h-11 content-center hover:text-brand">
               Dashboard
             </Link>
+            <Link href="/parent/homework" className="min-h-11 content-center hover:text-brand">
+              Homework
+            </Link>
             <Link href="/parent/notices" className="min-h-11 content-center hover:text-brand">
               Notices
             </Link>

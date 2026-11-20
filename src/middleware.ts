@@ -64,8 +64,11 @@ export const config = {
     "/reports/:path*",
     "/staff/:path*",
     "/settings/:path*",
+    "/homework/:path*",
+    "/parents/:path*",
     "/parent/login",
     "/parent/dashboard/:path*",
     "/parent/notices/:path*",
+    "/parent/homework/:path*",
   ],
 };
