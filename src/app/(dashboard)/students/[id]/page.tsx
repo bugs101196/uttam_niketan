@@ -81,6 +81,9 @@ export default async function StudentPage({
   return (
     <div className="max-w-3xl">
       {header}
+      <Link href={`/fees/${student.id}`} className="mb-6 inline-flex min-h-11 items-center font-semibold text-brand">
+        View fees →
+      </Link>
       <StudentForm
         action={updateStudent.bind(null, student.id)}
         initial={{

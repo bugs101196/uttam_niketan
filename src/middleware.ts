@@ -66,9 +66,11 @@ export const config = {
     "/settings/:path*",
     "/homework/:path*",
     "/parents/:path*",
+    "/fees/:path*",
     "/parent/login",
     "/parent/dashboard/:path*",
     "/parent/notices/:path*",
+    "/parent/fees/:path*",
     "/parent/homework/:path*",
   ],
 };

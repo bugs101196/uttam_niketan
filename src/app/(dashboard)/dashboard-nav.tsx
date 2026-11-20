@@ -13,6 +13,7 @@ const items: { href: string; label: string; roles: StaffRole[] }[] = [
   { href: "/homework", label: "Homework", roles: ["admin", "teacher", "office"] },
   { href: "/staff", label: "Staff", roles: ["admin"] },
   { href: "/parents", label: "Parents", roles: ["admin"] },
+  { href: "/fees", label: "Fees", roles: ["admin"] },
   { href: "/settings", label: "Settings", roles: ["admin"] },
 ];
 

@@ -86,6 +86,19 @@ export default async function SettingsPage({
         </span>
       </Link>
 
+      <Link
+        href="/settings/fees"
+        className="flex min-h-16 items-center justify-between rounded-xl border border-border bg-surface p-5 hover:bg-accent-soft"
+      >
+        <span>
+          <span className="block text-lg font-bold">Fee structure</span>
+          <span className="text-muted">Set fee heads and the amount each class owes, per academic year</span>
+        </span>
+        <span aria-hidden className="text-2xl text-brand">
+          →
+        </span>
+      </Link>
+
       <section aria-labelledby="messaging" className="rounded-xl border border-border bg-surface p-5">
         <h2 id="messaging" className="text-lg font-bold">
           WhatsApp absence alerts
