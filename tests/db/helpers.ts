@@ -89,7 +89,7 @@ export interface SchoolFixture {
   today: string;
 }
 
-async function createUser(tx: Tx, schoolId: string, role: "admin" | "teacher", isActive = true) {
+export async function createUser(tx: Tx, schoolId: string, role: "admin" | "teacher" | "office", isActive = true) {
   const id = randomUUID();
   await tx.query("system", "insert into auth.users (id, email) values ($1, $2)", [id, `${id}@example.test`]);
   await tx.query(
@@ -191,4 +191,43 @@ export async function createSchool(tx: Tx): Promise<SchoolFixture> {
 
 export function records(studentIds: string[], status: (i: number) => string = () => "present") {
   return JSON.stringify(studentIds.map((student_id, i) => ({ student_id, status: status(i) })));
+}
+
+/** Assigns an existing teacher to a section for the fixture's academic year. */
+export async function assignTeacher(
+  tx: Tx,
+  f: { schoolId: string; yearId: string },
+  teacherId: string,
+  sectionId: string,
+) {
+  await tx.query(
+    "system",
+    "insert into public.teacher_assignments (school_id, teacher_id, section_id, academic_year_id) values ($1, $2, $3, $4)",
+    [f.schoolId, teacherId, sectionId, f.yearId],
+  );
+}
+
+/** A guardian in `schoolId`, linked to `studentIds` via guardian_students. */
+export async function createGuardian(tx: Tx, schoolId: string, studentIds: string[] = []) {
+  const id = randomUUID();
+  const hex = randomUUID().replace(/-/g, "");
+  const phoneDigits = hex
+    .split("")
+    .map((c) => (parseInt(c, 16) % 10).toString())
+    .join("")
+    .slice(0, 10);
+  await tx.query("system", "insert into auth.users (id, email) values ($1, $2)", [id, `${id}@example.test`]);
+  await tx.query(
+    "system",
+    "insert into public.guardians (id, school_id, full_name, phone) values ($1, $2, $3, $4)",
+    [id, schoolId, "Test Guardian", `+91${phoneDigits}`],
+  );
+  for (const studentId of studentIds) {
+    await tx.query(
+      "system",
+      "insert into public.guardian_students (guardian_id, student_id) values ($1, $2)",
+      [id, studentId],
+    );
+  }
+  return id;
 }
