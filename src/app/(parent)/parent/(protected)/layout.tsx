@@ -34,6 +34,9 @@ export default async function ParentLayout({ children }: { children: React.React
             <Link href="/parent/notices" className="min-h-11 content-center hover:text-brand">
               Notices
             </Link>
+            <Link href="/parent/fees" className="min-h-11 content-center hover:text-brand">
+              Fees
+            </Link>
           </nav>
           <div className="flex items-center gap-3">
             <p className="hidden text-sm font-semibold sm:block">{guardian.fullName}</p>

@@ -254,6 +254,172 @@ export type Database = {
           },
         ];
       };
+      fee_heads: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          name_hi: string | null;
+          school_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          name_hi?: string | null;
+          school_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          name_hi?: string | null;
+          school_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fee_heads_school_id_fkey";
+            columns: ["school_id"];
+            isOneToOne: false;
+            referencedRelation: "schools";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      fee_payments: {
+        Row: {
+          amount: number;
+          created_at: string;
+          gateway: string | null;
+          gateway_order_id: string | null;
+          gateway_payload: Json | null;
+          gateway_payment_id: string | null;
+          id: string;
+          invoice_id: string;
+          method: Database["public"]["Enums"]["payment_method"];
+          note: string | null;
+          received_by: string | null;
+          recorded_via: string;
+          reversed_payment_id: string | null;
+          school_id: string;
+          status: Database["public"]["Enums"]["payment_status"];
+        };
+        ComputedFields: never;
+        Insert: {
+          amount: number;
+          created_at?: string;
+          gateway?: string | null;
+          gateway_order_id?: string | null;
+          gateway_payload?: Json | null;
+          gateway_payment_id?: string | null;
+          id?: string;
+          invoice_id: string;
+          method: Database["public"]["Enums"]["payment_method"];
+          note?: string | null;
+          received_by?: string | null;
+          recorded_via: string;
+          reversed_payment_id?: string | null;
+          school_id: string;
+          status?: Database["public"]["Enums"]["payment_status"];
+        };
+        Update: {
+          amount?: number;
+          created_at?: string;
+          gateway?: string | null;
+          gateway_order_id?: string | null;
+          gateway_payload?: Json | null;
+          gateway_payment_id?: string | null;
+          id?: string;
+          invoice_id?: string;
+          method?: Database["public"]["Enums"]["payment_method"];
+          note?: string | null;
+          received_by?: string | null;
+          recorded_via?: string;
+          reversed_payment_id?: string | null;
+          school_id?: string;
+          status?: Database["public"]["Enums"]["payment_status"];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fee_payments_invoice_id_school_id_fkey";
+            columns: ["invoice_id", "school_id"];
+            isOneToOne: false;
+            referencedRelation: "student_invoices";
+            referencedColumns: ["id", "school_id"];
+          },
+          {
+            foreignKeyName: "fee_payments_received_by_fkey";
+            columns: ["received_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fee_payments_reversed_payment_id_fkey";
+            columns: ["reversed_payment_id"];
+            isOneToOne: false;
+            referencedRelation: "fee_payments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fee_payments_school_id_fkey";
+            columns: ["school_id"];
+            isOneToOne: false;
+            referencedRelation: "schools";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      fee_structures: {
+        Row: {
+          academic_year_id: string;
+          amount: number;
+          class_id: string;
+          created_at: string;
+          fee_head_id: string;
+          id: string;
+          school_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          academic_year_id: string;
+          amount: number;
+          class_id: string;
+          created_at?: string;
+          fee_head_id: string;
+          id?: string;
+          school_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          academic_year_id?: string;
+          amount?: number;
+          class_id?: string;
+          created_at?: string;
+          fee_head_id?: string;
+          id?: string;
+          school_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fee_structures_class_id_school_id_academic_year_id_fkey";
+            columns: ["class_id", "school_id", "academic_year_id"];
+            isOneToOne: false;
+            referencedRelation: "classes";
+            referencedColumns: ["id", "school_id", "academic_year_id"];
+          },
+          {
+            foreignKeyName: "fee_structures_fee_head_id_school_id_fkey";
+            columns: ["fee_head_id", "school_id"];
+            isOneToOne: false;
+            referencedRelation: "fee_heads";
+            referencedColumns: ["id", "school_id"];
+          },
+        ];
+      };
       guardian_students: {
         Row: {
           created_at: string;
@@ -391,6 +557,40 @@ export type Database = {
             columns: ["section_id"];
             isOneToOne: false;
             referencedRelation: "sections";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      invoice_items: {
+        Row: {
+          amount: number;
+          fee_head_id: string;
+          invoice_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount: number;
+          fee_head_id: string;
+          invoice_id: string;
+        };
+        Update: {
+          amount?: number;
+          fee_head_id?: string;
+          invoice_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_fee_head_id_fkey";
+            columns: ["fee_head_id"];
+            isOneToOne: false;
+            referencedRelation: "fee_heads";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey";
+            columns: ["invoice_id"];
+            isOneToOne: false;
+            referencedRelation: "student_invoices";
             referencedColumns: ["id"];
           },
         ];
@@ -602,6 +802,58 @@ export type Database = {
           },
         ];
       };
+      student_invoices: {
+        Row: {
+          academic_year_id: string;
+          created_at: string;
+          id: string;
+          label: string;
+          school_id: string;
+          status: Database["public"]["Enums"]["invoice_status"];
+          student_id: string;
+          total_amount: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          academic_year_id: string;
+          created_at?: string;
+          id?: string;
+          label: string;
+          school_id: string;
+          status?: Database["public"]["Enums"]["invoice_status"];
+          student_id: string;
+          total_amount: number;
+          updated_at?: string;
+        };
+        Update: {
+          academic_year_id?: string;
+          created_at?: string;
+          id?: string;
+          label?: string;
+          school_id?: string;
+          status?: Database["public"]["Enums"]["invoice_status"];
+          student_id?: string;
+          total_amount?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "student_invoices_academic_year_id_school_id_fkey";
+            columns: ["academic_year_id", "school_id"];
+            isOneToOne: false;
+            referencedRelation: "academic_years";
+            referencedColumns: ["id", "school_id"];
+          },
+          {
+            foreignKeyName: "student_invoices_student_id_school_id_fkey";
+            columns: ["student_id", "school_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["id", "school_id"];
+          },
+        ];
+      };
       students: {
         Row: {
           admission_no: string;
@@ -769,6 +1021,26 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      create_invoice: {
+        Args: { p_label: string; p_student_id: string };
+        Returns: {
+          academic_year_id: string;
+          created_at: string;
+          id: string;
+          label: string;
+          school_id: string;
+          status: Database["public"]["Enums"]["invoice_status"];
+          student_id: string;
+          total_amount: number;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "student_invoices";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       lock_attendance_session: {
         Args: { p_session_id: string };
         Returns: {
@@ -809,6 +1081,58 @@ export type Database = {
         SetofOptions: {
           from: "*";
           to: "attendance_sessions";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      record_cash_payment: {
+        Args: { p_amount: number; p_invoice_id: string; p_note: string };
+        Returns: {
+          amount: number;
+          created_at: string;
+          gateway: string | null;
+          gateway_order_id: string | null;
+          gateway_payload: Json | null;
+          gateway_payment_id: string | null;
+          id: string;
+          invoice_id: string;
+          method: Database["public"]["Enums"]["payment_method"];
+          note: string | null;
+          received_by: string | null;
+          recorded_via: string;
+          reversed_payment_id: string | null;
+          school_id: string;
+          status: Database["public"]["Enums"]["payment_status"];
+        };
+        SetofOptions: {
+          from: "*";
+          to: "fee_payments";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      reverse_payment: {
+        Args: { p_payment_id: string; p_reason: string };
+        Returns: {
+          amount: number;
+          created_at: string;
+          gateway: string | null;
+          gateway_order_id: string | null;
+          gateway_payload: Json | null;
+          gateway_payment_id: string | null;
+          id: string;
+          invoice_id: string;
+          method: Database["public"]["Enums"]["payment_method"];
+          note: string | null;
+          received_by: string | null;
+          recorded_via: string;
+          reversed_payment_id: string | null;
+          school_id: string;
+          status: Database["public"]["Enums"]["payment_status"];
+        };
+        SetofOptions: {
+          from: "*";
+          to: "fee_payments";
           isOneToOne: true;
           isSetofReturn: false;
         };
@@ -863,7 +1187,10 @@ export type Database = {
       attendance_session_status: "draft" | "submitted" | "locked";
       attendance_status: "present" | "absent" | "late" | "excused";
       enrollment_status: "active" | "inactive" | "transferred";
+      invoice_status: "unpaid" | "partial" | "paid" | "waived";
       notification_status: "queued" | "processing" | "sent" | "delivered" | "read" | "failed" | "cancelled" | "skipped";
+      payment_method: "cash" | "online";
+      payment_status: "completed" | "reversed";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -976,7 +1303,10 @@ export const Constants = {
       attendance_session_status: ["draft", "submitted", "locked"],
       attendance_status: ["present", "absent", "late", "excused"],
       enrollment_status: ["active", "inactive", "transferred"],
+      invoice_status: ["unpaid", "partial", "paid", "waived"],
       notification_status: ["queued", "processing", "sent", "delivered", "read", "failed", "cancelled", "skipped"],
+      payment_method: ["cash", "online"],
+      payment_status: ["completed", "reversed"],
     },
   },
 } as const;
