@@ -144,17 +144,23 @@ create table public.fee_payments (
 create index fee_payments_invoice_idx on public.fee_payments (invoice_id);
 
 -- ---------------------------------------------------------------------------
--- Table privileges and RLS. Clients get select-only everywhere -- every
--- write goes through a security-definer function below, same pattern as
--- attendance_sessions/attendance_records.
+-- Table privileges and RLS.
+--
+-- fee_heads/fee_structures are admin-managed config (the catalog and its
+-- per-class pricing), the same risk class as classes/sections -- admin gets
+-- direct insert/update/delete through RLS (classes_write_admin /
+-- sections_write_admin's own pattern), not a security-definer function.
+--
+-- student_invoices/invoice_items/fee_payments are the actual ledger --
+-- clients get select-only, every write goes through a security-definer
+-- function below, same pattern as attendance_sessions/attendance_records.
 -- ---------------------------------------------------------------------------
 
 revoke all on public.fee_heads, public.fee_structures, public.student_invoices,
   public.invoice_items, public.fee_payments
   from anon, authenticated;
-grant select on public.fee_heads, public.fee_structures, public.student_invoices,
-  public.invoice_items, public.fee_payments
-  to authenticated;
+grant select, insert, update, delete on public.fee_heads, public.fee_structures to authenticated;
+grant select on public.student_invoices, public.invoice_items, public.fee_payments to authenticated;
 
 alter table public.fee_heads enable row level security;
 alter table public.fee_structures enable row level security;
@@ -162,10 +168,11 @@ alter table public.student_invoices enable row level security;
 alter table public.invoice_items enable row level security;
 alter table public.fee_payments enable row level security;
 
--- fee_heads: admin manages their own school's catalog. A guardian may read
--- only the specific heads that appear on one of their own children's
--- invoices -- not the whole catalog, matching the "narrowest reasonable
--- default" the office-visibility decision already set for this module.
+-- fee_heads: admin manages their own school's catalog (insert/update/delete
+-- via fee_heads_write_admin below). A guardian may additionally read only
+-- the specific heads that appear on one of their own children's invoices --
+-- not the whole catalog, matching the "narrowest reasonable default" the
+-- office-visibility decision already set for this module.
 create policy fee_heads_select on public.fee_heads
   for select to authenticated
   using (
@@ -178,11 +185,18 @@ create policy fee_heads_select on public.fee_heads
     )
   );
 
--- fee_structures: admin-only, own school. Never exposed to guardians --
--- invoice_items already carries the amount a parent needs to see.
-create policy fee_structures_select on public.fee_structures
-  for select to authenticated
-  using (school_id = (select private.current_school_id()) and (select private.is_admin()));
+create policy fee_heads_write_admin on public.fee_heads
+  for all to authenticated
+  using (school_id = (select private.current_school_id()) and (select private.is_admin()))
+  with check (school_id = (select private.current_school_id()) and (select private.is_admin()));
+
+-- fee_structures: admin-only, own school -- same shape as classes_write_admin
+-- / sections_write_admin. Never exposed to guardians -- invoice_items
+-- already carries the amount a parent needs to see.
+create policy fee_structures_write_admin on public.fee_structures
+  for all to authenticated
+  using (school_id = (select private.current_school_id()) and (select private.is_admin()))
+  with check (school_id = (select private.current_school_id()) and (select private.is_admin()));
 
 -- student_invoices: admin sees every invoice in their school; a guardian
 -- sees only their own linked children's invoices. No teacher or office
