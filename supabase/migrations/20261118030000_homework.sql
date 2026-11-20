@@ -23,7 +23,12 @@ create table public.homework (
   due_date date not null,
   created_by uuid not null references public.profiles (id),
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  -- Ties school_id to section_id's *real* school (sections has a matching
+  -- `unique (id, school_id)`), same denormalisation-kept-consistent pattern
+  -- as classes/sections. Without this, school_id and section_id could
+  -- disagree, leaking a row into the wrong school's admin/office view.
+  foreign key (section_id, school_id) references public.sections (id, school_id)
 );
 
 create index homework_section_idx on public.homework (section_id, due_date desc);
