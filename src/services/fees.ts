@@ -177,3 +177,158 @@ export async function listFeeStructures(yearId: string): Promise<FeeStructureEnt
   if (error) throw error;
   return data.map((r) => ({ id: r.id, classId: r.class_id, feeHeadId: r.fee_head_id, feeHeadName: r.fee_heads.name, amount: r.amount }));
 }
+
+// ---------------------------------------------------------------------------
+// Reports (admin-only; docs/ERP_ARCHITECTURE.md §18 step 7). Both reports
+// read student_invoices/fee_payments directly -- same RLS-scoped tables
+// listInvoicesForStudent already reads, just sliced a different way.
+// ---------------------------------------------------------------------------
+
+export interface CollectionEntry {
+  id: string;
+  createdAt: string;
+  studentId: string;
+  studentName: string;
+  sectionLabel: string;
+  method: PaymentMethod;
+  amount: number; // signed; negative = a reversal
+  receivedByName: string | null;
+  note: string | null;
+}
+
+export interface CollectionReport {
+  entries: CollectionEntry[];
+  totals: { cash: number; online: number; reversed: number; net: number };
+}
+
+/** Every fee payment and reversal recorded in [fromDate, toDate], school-local dates, inclusive. */
+export async function getCollectionReport(fromDate: string, toDate: string): Promise<CollectionReport> {
+  const supabase = await createClient();
+  const { data: payments, error } = await supabase
+    .from("fee_payments")
+    .select("id, invoice_id, amount, method, note, created_at, profiles:received_by(full_name)")
+    .gte("created_at", `${fromDate}T00:00:00+05:30`)
+    .lte("created_at", `${toDate}T23:59:59.999+05:30`)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  if (!payments || payments.length === 0) {
+    return { entries: [], totals: { cash: 0, online: 0, reversed: 0, net: 0 } };
+  }
+
+  const invoiceIds = [...new Set(payments.map((p) => p.invoice_id))];
+  const { data: invoices, error: invoicesError } = await supabase
+    .from("student_invoices")
+    .select("id, student_id")
+    .in("id", invoiceIds);
+  if (invoicesError) throw invoicesError;
+  const invoiceToStudent = new Map(invoices.map((i) => [i.id, i.student_id]));
+
+  const studentIds = [...new Set(invoices.map((i) => i.student_id))];
+  const { data: students, error: studentsError } = studentIds.length
+    ? await supabase
+        .from("students")
+        .select("id, full_name, sections!inner(name, classes!inner(name))")
+        .in("id", studentIds)
+    : { data: [], error: null };
+  if (studentsError) throw studentsError;
+  const studentById = new Map((students ?? []).map((s) => [s.id, s]));
+
+  const entries: CollectionEntry[] = payments.map((p) => {
+    const studentId = invoiceToStudent.get(p.invoice_id) ?? "";
+    const student = studentById.get(studentId);
+    return {
+      id: p.id,
+      createdAt: p.created_at,
+      studentId,
+      studentName: student?.full_name ?? "Unknown",
+      sectionLabel: student ? `${student.sections.classes.name} – ${student.sections.name}` : "—",
+      method: p.method,
+      amount: p.amount,
+      receivedByName: p.profiles?.full_name ?? null,
+      note: p.note,
+    };
+  });
+
+  const totals = entries.reduce(
+    (acc, e) => {
+      if (e.amount < 0) acc.reversed += e.amount;
+      else if (e.method === "cash") acc.cash += e.amount;
+      else acc.online += e.amount;
+      return acc;
+    },
+    { cash: 0, online: 0, reversed: 0, net: 0 },
+  );
+  totals.net = totals.cash + totals.online + totals.reversed;
+
+  return { entries, totals };
+}
+
+export interface DueRow {
+  invoiceId: string;
+  studentId: string;
+  studentName: string;
+  rollNo: number | null;
+  sectionLabel: string;
+  classSortOrder: number;
+  label: string;
+  totalAmount: number;
+  balance: number;
+}
+
+export interface OutstandingReport {
+  rows: DueRow[];
+  total: number;
+}
+
+/** Every invoice with a balance still owed, for one academic year -- excludes paid and waived invoices. */
+export async function getOutstandingReport(yearId: string): Promise<OutstandingReport> {
+  const supabase = await createClient();
+  const { data: invoices, error } = await supabase
+    .from("student_invoices")
+    .select("id, student_id, label, total_amount")
+    .eq("academic_year_id", yearId)
+    .in("status", ["unpaid", "partial"]);
+  if (error) throw error;
+  if (!invoices || invoices.length === 0) return { rows: [], total: 0 };
+
+  const invoiceIds = invoices.map((i) => i.id);
+  const { data: payments, error: paymentsError } = await supabase
+    .from("fee_payments")
+    .select("invoice_id, amount")
+    .in("invoice_id", invoiceIds);
+  if (paymentsError) throw paymentsError;
+  const paidByInvoice = new Map<string, number>();
+  for (const p of payments ?? []) paidByInvoice.set(p.invoice_id, (paidByInvoice.get(p.invoice_id) ?? 0) + p.amount);
+
+  const studentIds = [...new Set(invoices.map((i) => i.student_id))];
+  const { data: students, error: studentsError } = await supabase
+    .from("students")
+    .select("id, full_name, roll_no, sections!inner(name, classes!inner(name, sort_order))")
+    .in("id", studentIds);
+  if (studentsError) throw studentsError;
+  const studentById = new Map(students.map((s) => [s.id, s]));
+
+  const rows: DueRow[] = invoices
+    .map((inv) => {
+      const student = studentById.get(inv.student_id);
+      return {
+        invoiceId: inv.id,
+        studentId: inv.student_id,
+        studentName: student?.full_name ?? "Unknown",
+        rollNo: student?.roll_no ?? null,
+        sectionLabel: student ? `${student.sections.classes.name} – ${student.sections.name}` : "—",
+        classSortOrder: student?.sections.classes.sort_order ?? 0,
+        label: inv.label,
+        totalAmount: inv.total_amount,
+        balance: inv.total_amount - (paidByInvoice.get(inv.id) ?? 0),
+      };
+    })
+    .filter((r) => r.balance > 0)
+    .sort(
+      (a, b) =>
+        a.classSortOrder - b.classSortOrder || (a.rollNo ?? Number.MAX_SAFE_INTEGER) - (b.rollNo ?? Number.MAX_SAFE_INTEGER) || a.studentName.localeCompare(b.studentName),
+    );
+
+  const total = rows.reduce((sum, r) => sum + r.balance, 0);
+  return { rows, total };
+}
