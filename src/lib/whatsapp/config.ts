@@ -16,6 +16,7 @@ export interface WhatsAppConfig {
   accessToken: string;
   phoneNumberId: string;
   templateName: string;
+  feeReminderTemplateName: string;
   apiVersion: string;
   /** Override only for local end-to-end tests against a fake server. */
   apiBaseUrl: string;
@@ -41,12 +42,14 @@ export function whatsappConfig(env: Record<string, string | undefined> = process
   const accessToken = env.WHATSAPP_ACCESS_TOKEN ?? "";
   const phoneNumberId = env.WHATSAPP_PHONE_NUMBER_ID ?? "";
   const templateName = env.WHATSAPP_TEMPLATE_NAME || "absence_alert";
+  const feeReminderTemplateName = env.WHATSAPP_FEE_TEMPLATE_NAME || "fee_reminder";
   return {
     mode: parseMode(env.WHATSAPP_MODE),
     configured: Boolean(accessToken && phoneNumberId && templateName),
     accessToken,
     phoneNumberId,
     templateName,
+    feeReminderTemplateName,
     apiVersion: env.WHATSAPP_API_VERSION || "v21.0",
     apiBaseUrl: (env.WHATSAPP_API_BASE_URL || "https://graph.facebook.com").replace(/\/$/, ""),
     appSecret: env.WHATSAPP_APP_SECRET ?? "",

@@ -2,6 +2,13 @@ import { z } from "zod";
 
 export const createInvoiceSchema = z.object({
   label: z.string().trim().min(1, "A label is required").max(100, "Must be at most 100 characters"),
+  dueDate: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Enter a valid date")
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : null)),
 });
 
 export const cashPaymentSchema = z.object({

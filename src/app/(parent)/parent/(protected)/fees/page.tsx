@@ -34,9 +34,23 @@ export default async function ParentFeesPage() {
     byChild.set(invoice.studentId, entry);
   }
 
+  const overdueInvoices = invoices.filter((i) => i.overdue);
+
   return (
     <div>
       <h1 className="text-2xl font-bold">Fees</h1>
+
+      {overdueInvoices.length > 0 ? (
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-red-900" role="alert">
+          <p className="font-semibold">
+            {overdueInvoices.length === 1
+              ? "1 invoice is overdue."
+              : `${overdueInvoices.length} invoices are overdue.`}
+          </p>
+          <p className="mt-1 text-sm">Please pay the outstanding balance as soon as possible.</p>
+        </div>
+      ) : null}
+
       <div className="mt-6 space-y-8">
         {Array.from(byChild.entries()).map(([studentId, { studentName, invoices: childInvoices }]) => (
           <section key={studentId} aria-labelledby={`child-${studentId}`}>
@@ -48,9 +62,19 @@ export default async function ParentFeesPage() {
                 <li key={invoice.id} className="rounded-xl border border-border bg-surface p-5">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <p className="font-semibold">{invoice.label}</p>
-                    <p className={`text-sm font-semibold uppercase ${statusStyle[invoice.status]}`}>{invoice.status}</p>
+                    <div className="flex items-center gap-2">
+                      {invoice.overdue ? (
+                        <span className="rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-sm font-semibold text-red-800">
+                          Overdue
+                        </span>
+                      ) : null}
+                      <p className={`text-sm font-semibold uppercase ${statusStyle[invoice.status]}`}>{invoice.status}</p>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted">Issued {formatDate(invoice.createdAt)}</p>
+                  <p className="text-sm text-muted">
+                    Issued {formatDate(invoice.createdAt)}
+                    {invoice.dueDate ? ` · Due ${formatDate(invoice.dueDate)}` : ""}
+                  </p>
 
                   <dl className="mt-3 divide-y divide-border rounded-lg border border-border">
                     {invoice.items.map((item) => (

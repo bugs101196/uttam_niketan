@@ -371,6 +371,95 @@ export type Database = {
           },
         ];
       };
+      fee_reminder_jobs: {
+        Row: {
+          attempts: number;
+          created_at: string;
+          dedupe_key: string;
+          delivered_at: string | null;
+          failed_at: string | null;
+          id: string;
+          invoice_id: string;
+          last_error: string | null;
+          max_attempts: number;
+          next_attempt_at: string;
+          provider_message_id: string | null;
+          read_at: string | null;
+          recipient_phone: string;
+          school_id: string;
+          sent_at: string | null;
+          status: Database["public"]["Enums"]["notification_status"];
+          student_id: string;
+          template_language: Database["public"]["Enums"]["app_language"];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          attempts?: number;
+          created_at?: string;
+          dedupe_key: string;
+          delivered_at?: string | null;
+          failed_at?: string | null;
+          id?: string;
+          invoice_id: string;
+          last_error?: string | null;
+          max_attempts?: number;
+          next_attempt_at?: string;
+          provider_message_id?: string | null;
+          read_at?: string | null;
+          recipient_phone: string;
+          school_id: string;
+          sent_at?: string | null;
+          status?: Database["public"]["Enums"]["notification_status"];
+          student_id: string;
+          template_language: Database["public"]["Enums"]["app_language"];
+          updated_at?: string;
+        };
+        Update: {
+          attempts?: number;
+          created_at?: string;
+          dedupe_key?: string;
+          delivered_at?: string | null;
+          failed_at?: string | null;
+          id?: string;
+          invoice_id?: string;
+          last_error?: string | null;
+          max_attempts?: number;
+          next_attempt_at?: string;
+          provider_message_id?: string | null;
+          read_at?: string | null;
+          recipient_phone?: string;
+          school_id?: string;
+          sent_at?: string | null;
+          status?: Database["public"]["Enums"]["notification_status"];
+          student_id?: string;
+          template_language?: Database["public"]["Enums"]["app_language"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "fee_reminder_jobs_invoice_id_school_id_fkey";
+            columns: ["invoice_id", "school_id"];
+            isOneToOne: false;
+            referencedRelation: "student_invoices";
+            referencedColumns: ["id", "school_id"];
+          },
+          {
+            foreignKeyName: "fee_reminder_jobs_school_id_fkey";
+            columns: ["school_id"];
+            isOneToOne: false;
+            referencedRelation: "schools";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fee_reminder_jobs_student_id_school_id_fkey";
+            columns: ["student_id", "school_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["id", "school_id"];
+          },
+        ];
+      };
       fee_structures: {
         Row: {
           academic_year_id: string;
@@ -806,6 +895,7 @@ export type Database = {
         Row: {
           academic_year_id: string;
           created_at: string;
+          due_date: string | null;
           id: string;
           label: string;
           school_id: string;
@@ -818,6 +908,7 @@ export type Database = {
         Insert: {
           academic_year_id: string;
           created_at?: string;
+          due_date?: string | null;
           id?: string;
           label: string;
           school_id: string;
@@ -829,6 +920,7 @@ export type Database = {
         Update: {
           academic_year_id?: string;
           created_at?: string;
+          due_date?: string | null;
           id?: string;
           label?: string;
           school_id?: string;
@@ -980,6 +1072,20 @@ export type Database = {
         Args: { p_at?: string; p_error?: string; p_provider_message_id: string; p_status: string };
         Returns: boolean;
       };
+      claim_fee_reminder_jobs: {
+        Args: { p_limit?: number };
+        Returns: {
+          attempts: number;
+          balance: number;
+          class_label: string;
+          due_date: string;
+          id: string;
+          invoice_label: string;
+          recipient_phone: string;
+          student_name: string;
+          template_language: Database["public"]["Enums"]["app_language"];
+        }[];
+      };
       claim_notification_jobs: {
         Args: { p_limit?: number };
         Returns: {
@@ -991,6 +1097,10 @@ export type Database = {
           student_name: string;
           template_language: Database["public"]["Enums"]["app_language"];
         }[];
+      };
+      complete_fee_reminder_job: {
+        Args: { p_error?: string; p_job_id: string; p_outcome: string; p_provider_message_id?: string };
+        Returns: undefined;
       };
       complete_notification_job: {
         Args: { p_error?: string; p_job_id: string; p_outcome: string; p_provider_message_id?: string };
@@ -1022,10 +1132,11 @@ export type Database = {
         };
       };
       create_invoice: {
-        Args: { p_label: string; p_student_id: string };
+        Args: { p_due_date?: string; p_label: string; p_student_id: string };
         Returns: {
           academic_year_id: string;
           created_at: string;
+          due_date: string | null;
           id: string;
           label: string;
           school_id: string;
@@ -1138,6 +1249,7 @@ export type Database = {
         };
       };
       save_attendance_draft: { Args: { p_records: Json; p_session_id: string }; Returns: number };
+      scan_overdue_invoices_for_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       set_active_academic_year: {
         Args: { p_year_id: string };
         Returns: {

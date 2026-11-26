@@ -20,6 +20,11 @@ export function CreateInvoiceForm({ action }: { action: BoundAction }) {
             <Input id="invoice_label" name="label" required invalid={!!errors.label} autoComplete="off" />
           </Field>
         </div>
+        <div>
+          <Field label="Due date (optional)" htmlFor="invoice_due_date" error={errors.dueDate} hint="For fee reminders">
+            <Input id="invoice_due_date" name="due_date" type="date" invalid={!!errors.dueDate} />
+          </Field>
+        </div>
         <Button type="submit" disabled={pending}>
           {pending ? "Creating…" : "Create invoice"}
         </Button>

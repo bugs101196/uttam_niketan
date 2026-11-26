@@ -22,13 +22,13 @@ export async function createInvoiceAction(
   formData: FormData,
 ): Promise<FeesActionState> {
   await requireAdmin();
-  const parsed = createInvoiceSchema.safeParse({ label: formData.get("label") });
+  const parsed = createInvoiceSchema.safeParse({ label: formData.get("label"), dueDate: formData.get("due_date") });
   if (!parsed.success) {
     return { message: "Please correct the highlighted fields.", fieldErrors: fieldErrors(parsed.error), attempt: next(prev) };
   }
 
   try {
-    await createInvoice(studentId, parsed.data.label);
+    await createInvoice(studentId, parsed.data.label, parsed.data.dueDate);
   } catch (error) {
     return { message: describeFeesError(error as { code?: string; message?: string }), attempt: next(prev) };
   }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button, Input, Select } from "@/components/ui/form";
 import { requireAdmin } from "@/lib/auth/staff";
-import { formatDateTime, formatMonth, isIsoMonth, monthRange, todayIn } from "@/lib/dates";
+import { formatDate, formatDateTime, formatMonth, isIsoMonth, monthRange, todayIn } from "@/lib/dates";
 import { formatMoney } from "@/lib/money";
 import { getSchoolTimezone } from "@/services/attendance";
 import { listYears } from "@/services/classes";
@@ -183,6 +183,7 @@ async function DuesReport({ yearParam }: { yearParam: string | undefined }) {
                 <th className="px-4 py-3 font-semibold">Student</th>
                 <th className="px-3 py-3 font-semibold">Class</th>
                 <th className="px-3 py-3 font-semibold">Invoice</th>
+                <th className="px-3 py-3 font-semibold">Due date</th>
                 <th className="px-3 py-3 text-right font-semibold">Total</th>
                 <th className="px-3 py-3 text-right font-semibold">Balance due</th>
               </tr>
@@ -198,6 +199,14 @@ async function DuesReport({ yearParam }: { yearParam: string | undefined }) {
                   </td>
                   <td className="px-3 py-3">{r.sectionLabel}</td>
                   <td className="px-3 py-3">{r.label}</td>
+                  <td className="px-3 py-3">
+                    {r.dueDate ? formatDate(r.dueDate) : "—"}
+                    {r.overdue ? (
+                      <span className="ml-2 rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-800">
+                        Overdue
+                      </span>
+                    ) : null}
+                  </td>
                   <td className="px-3 py-3 text-right tabular-nums">{formatMoney(r.totalAmount)}</td>
                   <td className="px-3 py-3 text-right font-semibold tabular-nums">{formatMoney(r.balance)}</td>
                 </tr>
@@ -205,7 +214,7 @@ async function DuesReport({ yearParam }: { yearParam: string | undefined }) {
             </tbody>
             <tfoot className="border-t-2 border-border font-semibold">
               <tr>
-                <td className="px-4 py-3" colSpan={4}>
+                <td className="px-4 py-3" colSpan={5}>
                   Total outstanding
                 </td>
                 <td className="px-3 py-3 text-right tabular-nums">{formatMoney(report.total)}</td>

@@ -1,4 +1,5 @@
 import "server-only";
+import { todayIn } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
 
@@ -32,12 +33,22 @@ export interface InvoiceDetail {
   totalAmount: number;
   status: InvoiceStatus;
   createdAt: string;
+  dueDate: string | null;
+  overdue: boolean; // due_date has passed and a balance remains -- never true for paid/waived invoices
   items: InvoiceLineItem[];
   payments: Payment[];
   balance: number; // totalAmount minus the sum of every payment's signed amount
 }
 
-type InvoiceRow = { id: string; student_id: string; label: string; total_amount: number; status: InvoiceStatus; created_at: string };
+type InvoiceRow = {
+  id: string;
+  student_id: string;
+  label: string;
+  total_amount: number;
+  status: InvoiceStatus;
+  created_at: string;
+  due_date: string | null;
+};
 
 /** Joins invoice_items and fee_payments onto a batch of already-fetched invoice rows. */
 async function attachLines(supabase: SupabaseClient, invoices: InvoiceRow[]): Promise<InvoiceDetail[]> {
@@ -74,6 +85,8 @@ async function attachLines(supabase: SupabaseClient, invoices: InvoiceRow[]): Pr
         createdAt: p.created_at,
       }));
     const balance = inv.total_amount - payments.reduce((sum, p) => sum + p.amount, 0);
+    const today = todayIn();
+    const overdue = inv.due_date !== null && inv.due_date < today && balance > 0;
     return {
       id: inv.id,
       studentId: inv.student_id,
@@ -81,6 +94,8 @@ async function attachLines(supabase: SupabaseClient, invoices: InvoiceRow[]): Pr
       totalAmount: inv.total_amount,
       status: inv.status,
       createdAt: inv.created_at,
+      dueDate: inv.due_date,
+      overdue,
       items,
       payments,
       balance,
@@ -93,7 +108,7 @@ export async function listInvoicesForStudent(studentId: string): Promise<Invoice
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("student_invoices")
-    .select("id, student_id, label, total_amount, status, created_at")
+    .select("id, student_id, label, total_amount, status, created_at, due_date")
     .eq("student_id", studentId)
     .order("created_at", { ascending: false });
   if (error) throw error;
@@ -109,16 +124,21 @@ export async function listOwnInvoices(): Promise<OwnInvoice[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("student_invoices")
-    .select("id, student_id, label, total_amount, status, created_at, students!inner(full_name)")
+    .select("id, student_id, label, total_amount, status, created_at, due_date, students!inner(full_name)")
     .order("created_at", { ascending: false });
   if (error) throw error;
   const detailed = await attachLines(supabase, data ?? []);
   return detailed.map((detail, i) => ({ ...detail, studentName: data![i].students.full_name }));
 }
 
-export async function createInvoice(studentId: string, label: string) {
+/** dueDate, if given, must be an ISO "YYYY-MM-DD" string -- validated by createInvoiceSchema before this is called. */
+export async function createInvoice(studentId: string, label: string, dueDate: string | null = null) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("create_invoice", { p_student_id: studentId, p_label: label });
+  const { data, error } = await supabase.rpc("create_invoice", {
+    p_student_id: studentId,
+    p_label: label,
+    p_due_date: dueDate ?? undefined,
+  });
   if (error) throw error;
   return data;
 }
@@ -273,6 +293,8 @@ export interface DueRow {
   label: string;
   totalAmount: number;
   balance: number;
+  dueDate: string | null;
+  overdue: boolean;
 }
 
 export interface OutstandingReport {
@@ -285,7 +307,7 @@ export async function getOutstandingReport(yearId: string): Promise<OutstandingR
   const supabase = await createClient();
   const { data: invoices, error } = await supabase
     .from("student_invoices")
-    .select("id, student_id, label, total_amount")
+    .select("id, student_id, label, total_amount, due_date")
     .eq("academic_year_id", yearId)
     .in("status", ["unpaid", "partial"]);
   if (error) throw error;
@@ -307,10 +329,12 @@ export async function getOutstandingReport(yearId: string): Promise<OutstandingR
     .in("id", studentIds);
   if (studentsError) throw studentsError;
   const studentById = new Map(students.map((s) => [s.id, s]));
+  const today = todayIn();
 
   const rows: DueRow[] = invoices
     .map((inv) => {
       const student = studentById.get(inv.student_id);
+      const balance = inv.total_amount - (paidByInvoice.get(inv.id) ?? 0);
       return {
         invoiceId: inv.id,
         studentId: inv.student_id,
@@ -320,7 +344,9 @@ export async function getOutstandingReport(yearId: string): Promise<OutstandingR
         classSortOrder: student?.sections.classes.sort_order ?? 0,
         label: inv.label,
         totalAmount: inv.total_amount,
-        balance: inv.total_amount - (paidByInvoice.get(inv.id) ?? 0),
+        balance,
+        dueDate: inv.due_date,
+        overdue: inv.due_date !== null && inv.due_date < today && balance > 0,
       };
     })
     .filter((r) => r.balance > 0)
