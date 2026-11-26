@@ -249,7 +249,8 @@ begin
 
   update public.fee_reminder_jobs j
   set status = 'cancelled', last_error = 'Guardian consent, phone, or the school''s messaging switch changed'
-  where j.status = 'queued'
+  where j.status in ('queued', 'processing')
+    and (j.status = 'queued' or j.updated_at < now() - interval '10 minutes')
     and not exists (
       select 1 from public.students st
       join public.schools sc on sc.id = st.school_id
@@ -265,12 +266,23 @@ begin
     and j.attempts >= j.max_attempts
     and (j.status = 'queued' or j.updated_at < now() - interval '10 minutes');
 
+  -- The two cancellation passes above should already remove every
+  -- ineligible row, but the eligibility join here too means no row can
+  -- ever be claimed without currently passing the live check, regardless
+  -- of status or any gap between the passes and this query.
   return query
   with due as (
     select j.id
     from public.fee_reminder_jobs j
-    where (j.status = 'queued' and j.next_attempt_at <= now())
-       or (j.status = 'processing' and j.updated_at < now() - interval '10 minutes')
+    join public.students st on st.id = j.student_id
+    join public.schools sc on sc.id = st.school_id
+    where (
+      (j.status = 'queued' and j.next_attempt_at <= now())
+      or (j.status = 'processing' and j.updated_at < now() - interval '10 minutes')
+    )
+      and sc.whatsapp_enabled
+      and st.guardian_notifications_consent
+      and st.guardian_phone is not null
     order by j.next_attempt_at
     limit greatest(1, least(coalesce(p_limit, 20), 100))
     for update skip locked
