@@ -62,9 +62,19 @@ export default async function StudentFeesPage({ params }: { params: Promise<{ st
                 <li key={invoice.id} className="rounded-xl border border-border bg-surface p-5">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <p className="font-semibold">{invoice.label}</p>
-                    <p className={`text-sm font-semibold uppercase ${statusStyle[invoice.status]}`}>{invoice.status}</p>
+                    <div className="flex items-center gap-2">
+                      {invoice.overdue ? (
+                        <span className="rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-sm font-semibold text-red-800">
+                          Overdue
+                        </span>
+                      ) : null}
+                      <p className={`text-sm font-semibold uppercase ${statusStyle[invoice.status]}`}>{invoice.status}</p>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted">Created {formatDate(invoice.createdAt)}</p>
+                  <p className="text-sm text-muted">
+                    Created {formatDate(invoice.createdAt)}
+                    {invoice.dueDate ? ` · Due ${formatDate(invoice.dueDate)}` : ""}
+                  </p>
 
                   <dl className="mt-3 divide-y divide-border rounded-lg border border-border">
                     {invoice.items.map((item) => (

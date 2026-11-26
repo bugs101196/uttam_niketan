@@ -1,9 +1,22 @@
 import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { buildTemplatePayload, isPermanentFailure, sendAbsenceTemplate } from "@/lib/whatsapp/client";
+import {
+  buildFeeReminderPayload,
+  buildTemplatePayload,
+  isPermanentFailure,
+  sendAbsenceTemplate,
+  sendFeeReminderTemplate,
+} from "@/lib/whatsapp/client";
 import { parseMode, parseTestRecipients, whatsappConfig } from "@/lib/whatsapp/config";
 import { parseStatusEvents, verifySignature, verifySubscription } from "@/lib/whatsapp/webhook";
-import { processNotificationQueue, type ClaimedJob, type QueueStore } from "@/lib/whatsapp/worker";
+import {
+  processFeeReminderQueue,
+  processNotificationQueue,
+  type ClaimedFeeReminderJob,
+  type ClaimedJob,
+  type FeeReminderQueueStore,
+  type QueueStore,
+} from "@/lib/whatsapp/worker";
 
 const message = {
   to: "+919876543210",
@@ -11,6 +24,15 @@ const message = {
   studentName: "Diya Test",
   classLabel: "Class 3 – A",
   date: "2026-10-26",
+};
+
+const feeMessage = {
+  to: "+919876543210",
+  language: "hi" as const,
+  studentName: "Diya Test",
+  classLabel: "Class 3 – A",
+  balance: 2500,
+  dueDate: "2026-10-26",
 };
 
 describe("template payload", () => {
@@ -21,6 +43,21 @@ describe("template payload", () => {
     expect(payload.template.components[0].parameters.map((p) => p.text)).toEqual([
       "Diya Test",
       "Class 3 – A",
+      "26-10-2026",
+    ]);
+  });
+});
+
+describe("fee reminder template payload", () => {
+  it("puts name, class, formatted balance and due date in the approved order", () => {
+    const payload = buildFeeReminderPayload("fee_reminder", feeMessage);
+    expect(payload.to).toBe("919876543210");
+    expect(payload.template.name).toBe("fee_reminder");
+    expect(payload.template.language.code).toBe("hi");
+    expect(payload.template.components[0].parameters.map((p) => p.text)).toEqual([
+      "Diya Test",
+      "Class 3 – A",
+      "₹2,500.00",
       "26-10-2026",
     ]);
   });
@@ -76,6 +113,24 @@ describe("sending", () => {
       throw new Error("ECONNRESET");
     }) as typeof fetch;
     expect(await sendAbsenceTemplate(config, message, failing)).toMatchObject({ ok: false, permanent: false });
+  });
+});
+
+describe("sending (fee reminder)", () => {
+  it("returns the provider message id on success", async () => {
+    const result = await sendFeeReminderTemplate(config, feeMessage, fakeFetch(200, { messages: [{ id: "wamid.fee1" }] }));
+    expect(result).toEqual({ ok: true, messageId: "wamid.fee1" });
+  });
+
+  it("never puts the access token in the error", async () => {
+    const result = await sendFeeReminderTemplate(
+      config,
+      feeMessage,
+      fakeFetch(400, { error: { code: 131026, message: "Message undeliverable" } }),
+    );
+    expect(result.ok).toBe(false);
+    expect(JSON.stringify(result)).not.toContain("secret-token");
+    expect(result).toMatchObject({ permanent: true });
   });
 });
 
@@ -189,6 +244,90 @@ describe("worker", () => {
     await processNotificationQueue({
       config,
       store: store2,
+      fetchImpl: fakeFetch(400, { error: { code: 131026, message: "Undeliverable" } }),
+    });
+    expect(outcomes[0][1]).toBe("retry");
+    expect(outcomes2[0][1]).toBe("failed");
+  });
+});
+
+describe("fee reminder worker", () => {
+  const feeJob = (id: string, phone: string): ClaimedFeeReminderJob => ({
+    id,
+    recipient_phone: phone,
+    template_language: "en",
+    student_name: "Test Child",
+    class_label: "Class 1 – A",
+    invoice_label: "Term 1",
+    balance: 2500,
+    due_date: "2026-10-26",
+    attempts: 1,
+  });
+
+  function memoryFeeStore(jobs: ClaimedFeeReminderJob[]) {
+    const outcomes: [string, string, string | undefined][] = [];
+    const store: FeeReminderQueueStore = {
+      claim: async () => jobs,
+      complete: async (id, outcome, messageId, error) => {
+        outcomes.push([id, outcome, messageId ?? error]);
+      },
+    };
+    return { store, outcomes };
+  }
+
+  it("does nothing when sending is off, and never scans", async () => {
+    const { store, outcomes } = memoryFeeStore([feeJob("a", "+919876543210")]);
+    let scanned = false;
+    const result = await processFeeReminderQueue({
+      config: whatsappConfig({ WHATSAPP_MODE: "off" }),
+      store,
+      scan: async () => {
+        scanned = true;
+        return 0;
+      },
+    });
+    expect(result.status).toBe("disabled");
+    expect(outcomes).toEqual([]);
+    expect(scanned).toBe(false);
+  });
+
+  it("scans for newly-overdue invoices before claiming", async () => {
+    const { store } = memoryFeeStore([]);
+    let scanned = false;
+    await processFeeReminderQueue({
+      config,
+      store,
+      scan: async () => {
+        scanned = true;
+        return 3;
+      },
+    });
+    expect(scanned).toBe(true);
+  });
+
+  it("in test mode sends only to test numbers and skips the rest", async () => {
+    const { store, outcomes } = memoryFeeStore([feeJob("a", "+919876543210"), feeJob("b", "+918888888888")]);
+    const result = await processFeeReminderQueue({
+      config: { ...config, mode: "test" },
+      store,
+      scan: async () => 0,
+      fetchImpl: fakeFetch(200, { messages: [{ id: "wamid.ok" }] }),
+    });
+    expect(result).toMatchObject({ sent: 1, skipped: 1 });
+    expect(outcomes).toEqual([
+      ["a", "sent", "wamid.ok"],
+      ["b", "skipped", "Test mode: not a test recipient"],
+    ]);
+  });
+
+  it("maps provider failures to retry or failed", async () => {
+    const { store, outcomes } = memoryFeeStore([feeJob("a", "+919876543210")]);
+    await processFeeReminderQueue({ config, store, scan: async () => 0, fetchImpl: fakeFetch(503, {}) });
+    const { store: store2, outcomes: outcomes2 } = memoryFeeStore([feeJob("b", "+919876543210")]);
+    await processFeeReminderQueue({
+      config,
+      store: store2,
+      scan: async () => 0,
       fetchImpl: fakeFetch(400, { error: { code: 131026, message: "Undeliverable" } }),
     });
     expect(outcomes[0][1]).toBe("retry");

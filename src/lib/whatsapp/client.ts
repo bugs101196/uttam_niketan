@@ -1,3 +1,4 @@
+import { formatMoney } from "@/lib/money";
 import type { WhatsAppConfig } from "./config";
 
 // Minimal WhatsApp Cloud API client for the approved absence template.
@@ -10,6 +11,20 @@ export interface AbsenceMessage {
   studentName: string;
   classLabel: string;
   date: string; // YYYY-MM-DD
+}
+
+// Fee-reminder template body parameters, in this order (see
+// docs/whatsapp-templates.md):
+//   {{1}} student name   {{2}} class and section
+//   {{3}} balance due (formatted, e.g. "₹2,500.00")   {{4}} due date (DD-MM-YYYY)
+
+export interface FeeReminderMessage {
+  to: string; // E.164, e.g. +919876543210
+  language: "en" | "hi";
+  studentName: string;
+  classLabel: string;
+  balance: number;
+  dueDate: string; // YYYY-MM-DD
 }
 
 export type SendResult = { ok: true; messageId: string } | { ok: false; permanent: boolean; error: string };
@@ -34,6 +49,29 @@ export function buildTemplatePayload(templateName: string, message: AbsenceMessa
             { type: "text", text: message.studentName },
             { type: "text", text: message.classLabel },
             { type: "text", text: formatTemplateDate(message.date) },
+          ],
+        },
+      ],
+    },
+  };
+}
+
+export function buildFeeReminderPayload(templateName: string, message: FeeReminderMessage) {
+  return {
+    messaging_product: "whatsapp",
+    to: message.to.replace(/^\+/, ""),
+    type: "template",
+    template: {
+      name: templateName,
+      language: { code: message.language },
+      components: [
+        {
+          type: "body",
+          parameters: [
+            { type: "text", text: message.studentName },
+            { type: "text", text: message.classLabel },
+            { type: "text", text: formatMoney(message.balance) },
+            { type: "text", text: formatTemplateDate(message.dueDate) },
           ],
         },
       ],
@@ -84,6 +122,43 @@ export async function sendAbsenceTemplate(
 
   const code = body.error?.code;
   // Keep provider wording short and free of request data; never include the token.
+  const detail = (body.error?.message ?? "").slice(0, 200);
+  return {
+    ok: false,
+    permanent: isPermanentFailure(response.status, code),
+    error: `WhatsApp error ${response.status}${code ? ` (code ${code})` : ""}${detail ? `: ${detail}` : ""}`,
+  };
+}
+
+export async function sendFeeReminderTemplate(
+  config: Pick<WhatsAppConfig, "accessToken" | "phoneNumberId" | "feeReminderTemplateName" | "apiVersion" | "apiBaseUrl">,
+  message: FeeReminderMessage,
+  fetchImpl: typeof fetch = fetch,
+): Promise<SendResult> {
+  const url = `${config.apiBaseUrl}/${config.apiVersion}/${encodeURIComponent(config.phoneNumberId)}/messages`;
+  let response: Response;
+  try {
+    response = await fetchImpl(url, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${config.accessToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify(buildFeeReminderPayload(config.feeReminderTemplateName, message)),
+      signal: AbortSignal.timeout(15_000),
+    });
+  } catch {
+    return { ok: false, permanent: false, error: "Network error contacting WhatsApp" };
+  }
+
+  let body: { messages?: { id?: string }[]; error?: { code?: number; message?: string } } = {};
+  try {
+    body = await response.json();
+  } catch {
+    // Non-JSON body: fall through with an empty object.
+  }
+
+  const messageId = body.messages?.[0]?.id;
+  if (response.ok && messageId) return { ok: true, messageId };
+
+  const code = body.error?.code;
   const detail = (body.error?.message ?? "").slice(0, 200);
   return {
     ok: false,

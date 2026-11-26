@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/form";
 import { requireAdmin } from "@/lib/auth/staff";
-import { formatDate, formatDateTime } from "@/lib/dates";
+import { formatDate, formatDateTime, todayIn } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 import { whatsappConfig } from "@/lib/whatsapp/config";
 import type { Database } from "@/types/database";
 import { setMessagingEnabled } from "./actions";
+import { RunFeeReminderQueueButton } from "./run-fee-reminder-queue-button";
 import { RunQueueButton } from "./run-queue-button";
 
 export const metadata: Metadata = { title: "Settings" };
@@ -32,18 +33,25 @@ const modeText = {
   live: "Live — guardians who have consented receive absence alerts.",
 };
 
+const feeModeText = {
+  off: "Off — nothing is sent. Overdue invoices are tracked but no reminder goes out.",
+  test: "Test — only the configured test numbers receive messages; other reminders are skipped.",
+  live: "Live — guardians of overdue, consenting students receive a reminder, repeating monthly until paid.",
+};
+
 export default async function SettingsPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const admin = await requireAdmin();
-  const { status } = await searchParams;
+  const { status, feeStatus } = await searchParams;
   const filter = STATUSES.includes(status as JobStatus) ? (status as JobStatus) : undefined;
+  const feeFilter = STATUSES.includes(feeStatus as JobStatus) ? (feeStatus as JobStatus) : undefined;
   const supabase = await createClient();
   const config = whatsappConfig();
 
-  const [{ data: school }, { count: consented }, jobsQuery] = await Promise.all([
+  const [{ data: school }, { count: consented }, jobsQuery, feeJobsQuery, { count: overdueCount }] = await Promise.all([
     supabase.from("schools").select("name, whatsapp_enabled").eq("id", admin.schoolId).single(),
     supabase
       .from("students")
@@ -62,8 +70,25 @@ export default async function SettingsPage({
       if (filter) q = q.eq("status", filter);
       return q;
     })(),
+    (() => {
+      let q = supabase
+        .from("fee_reminder_jobs")
+        .select(
+          "id, status, attempts, last_error, created_at, sent_at, next_attempt_at, template_language, students(full_name), student_invoices(label, due_date)",
+        )
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (feeFilter) q = q.eq("status", feeFilter);
+      return q;
+    })(),
+    supabase
+      .from("student_invoices")
+      .select("id", { count: "exact", head: true })
+      .in("status", ["unpaid", "partial"])
+      .lt("due_date", todayIn()),
   ]);
   const jobs = jobsQuery.data ?? [];
+  const feeJobs = feeJobsQuery.data ?? [];
   const enabled = school?.whatsapp_enabled ?? false;
 
   return (
@@ -183,6 +208,98 @@ export default async function SettingsPage({
                   <p className="text-sm text-muted">
                     Absent {formatDate(job.attendance_date)} · {job.template_language === "hi" ? "Hindi" : "English"} ·
                     queued {formatDateTime(job.created_at)}
+                    {job.attempts > 1 ? ` · ${job.attempts} attempts` : ""}
+                  </p>
+                  {job.last_error ? <p className="text-sm text-red-700">{job.last_error}</p> : null}
+                </div>
+                <span
+                  className={`shrink-0 rounded-full border px-2.5 py-0.5 text-sm capitalize ${statusStyle[job.status]}`}
+                >
+                  {job.status}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section aria-labelledby="fee-messaging" className="rounded-xl border border-border bg-surface p-5">
+        <h2 id="fee-messaging" className="text-lg font-bold">
+          WhatsApp fee reminders
+        </h2>
+        <p className="mt-1 text-muted">
+          Once an invoice&apos;s due date has passed and a balance remains, the guardian receives a WhatsApp reminder
+          — repeating once a month until the invoice is paid or waived. Uses the same school switch and server sending
+          mode as absence alerts above, with its own approved template.
+        </p>
+
+        <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg bg-background p-3">
+            <dt className="text-sm text-muted">Invoices currently overdue</dt>
+            <dd className="font-semibold">{overdueCount ?? 0}</dd>
+          </div>
+          <div className="rounded-lg bg-background p-3">
+            <dt className="text-sm text-muted">Server sending</dt>
+            <dd className="font-semibold capitalize">
+              {config.mode}
+              {config.mode !== "off" && !config.configured ? " (not configured)" : ""}
+            </dd>
+          </div>
+        </dl>
+        <p className="mt-3 text-sm text-muted">{feeModeText[config.mode]}</p>
+
+        <div className="mt-4">
+          <RunFeeReminderQueueButton />
+        </div>
+        <p className="mt-2 text-sm text-muted">
+          This also runs automatically once a day (see <code>vercel.json</code>). Needs its own Meta-approved
+          template (<code>WHATSAPP_FEE_TEMPLATE_NAME</code>, default <code>fee_reminder</code>) — see
+          docs/whatsapp-templates.md.
+        </p>
+      </section>
+
+      <section aria-labelledby="fee-log">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h2 id="fee-log" className="text-lg font-bold">
+            Fee reminder log
+          </h2>
+          <nav aria-label="Filter by status" className="flex flex-wrap gap-1 text-sm">
+            <Link
+              href="/settings"
+              aria-current={!feeFilter ? "page" : undefined}
+              className={`rounded-full border px-3 py-1.5 ${!feeFilter ? "border-brand bg-brand text-brand-contrast" : "border-border"}`}
+            >
+              All
+            </Link>
+            {STATUSES.map((s) => (
+              <Link
+                key={s}
+                href={`/settings?feeStatus=${s}`}
+                aria-current={feeFilter === s ? "page" : undefined}
+                className={`rounded-full border px-3 py-1.5 capitalize ${feeFilter === s ? "border-brand bg-brand text-brand-contrast" : "border-border"}`}
+              >
+                {s}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        {feeJobs.length === 0 ? (
+          <p className="mt-3 rounded-xl border border-dashed border-border bg-surface p-6 text-center text-muted">
+            No reminders {feeFilter ? `with status “${feeFilter}”` : "yet"}.
+          </p>
+        ) : (
+          <ul className="mt-3 divide-y divide-border rounded-xl border border-border bg-surface">
+            {feeJobs.map((job) => (
+              <li key={job.id} className="flex flex-wrap items-start justify-between gap-2 px-4 py-3">
+                <div className="min-w-0">
+                  <p className="font-medium">
+                    {job.students?.full_name ?? "Student"} · {job.student_invoices?.label ?? "Invoice"}
+                  </p>
+                  <p className="text-sm text-muted">
+                    {job.student_invoices?.due_date ? `Due ${formatDate(job.student_invoices.due_date)} · ` : ""}
+                    {job.template_language === "hi" ? "Hindi" : "English"} ·{" "}
+                    {job.status === "queued" ? `next ${formatDateTime(job.next_attempt_at)}` : formatDateTime(job.created_at)}
                     {job.attempts > 1 ? ` · ${job.attempts} attempts` : ""}
                   </p>
                   {job.last_error ? <p className="text-sm text-red-700">{job.last_error}</p> : null}
