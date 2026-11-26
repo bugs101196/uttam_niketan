@@ -212,6 +212,15 @@ grant execute on function public.scan_overdue_invoices_for_reminders() to servic
 -- never "expired" by age (an overdue fee stays relevant indefinitely); it is
 -- cancelled instead once its invoice is settled, and recovered the same way
 -- a crashed worker's stuck 'processing' row would be.
+--
+-- A reminder recurs monthly, unlike the one-shot absence alert, so guardian
+-- consent, the guardian's phone, and the school's on/off switch must be
+-- re-checked on every claim (this runs at least daily, via cron) rather than
+-- only once at the original enqueue -- otherwise a guardian who withdraws
+-- consent, or a school that turns reminders off, would keep being messaged
+-- for months. The claimed row's recipient_phone/template_language are read
+-- live from students here too, not from the job's own (potentially stale)
+-- stored copy.
 create function public.claim_fee_reminder_jobs(p_limit integer default 20)
 returns table (
   id uuid,
@@ -239,6 +248,18 @@ begin
     );
 
   update public.fee_reminder_jobs j
+  set status = 'cancelled', last_error = 'Guardian consent, phone, or the school''s messaging switch changed'
+  where j.status = 'queued'
+    and not exists (
+      select 1 from public.students st
+      join public.schools sc on sc.id = st.school_id
+      where st.id = j.student_id
+        and sc.whatsapp_enabled
+        and st.guardian_notifications_consent
+        and st.guardian_phone is not null
+    );
+
+  update public.fee_reminder_jobs j
   set status = 'failed', failed_at = now(), last_error = coalesce(j.last_error, 'No attempts left')
   where j.status in ('queued', 'processing')
     and j.attempts >= j.max_attempts
@@ -261,7 +282,7 @@ begin
     where j.id = due.id
     returning j.*
   )
-  select c.id, c.recipient_phone, c.template_language, st.full_name,
+  select c.id, st.guardian_phone, st.preferred_language, st.full_name,
          cl.name || ' – ' || se.name, si.label,
          si.total_amount - coalesce((select sum(fp.amount) from public.fee_payments fp where fp.invoice_id = si.id), 0),
          si.due_date, c.attempts
