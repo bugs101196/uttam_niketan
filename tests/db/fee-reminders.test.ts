@@ -198,6 +198,73 @@ describe("claim_fee_reminder_jobs / complete_fee_reminder_job", () => {
       expect(again.find((c) => c.id === jobId)).toBeUndefined();
     }));
 
+  it("cancels a queued reminder once the guardian withdraws consent, instead of sending to a stale recipient", () =>
+    withTx(async (tx) => {
+      const { f, jobId } = await queuedJob(tx);
+      await tx.query("system", "update public.students set guardian_notifications_consent = false where id = $1", [
+        f.students1A[0],
+      ]);
+      const claimed = await tx.query<{ id: string }>("service", "select id from public.claim_fee_reminder_jobs(10)");
+      expect(claimed.find((c) => c.id === jobId)).toBeUndefined();
+      const [job] = await tx.query<{ status: string }>(
+        "system",
+        "select status from public.fee_reminder_jobs where id = $1",
+        [jobId],
+      );
+      expect(job.status).toBe("cancelled");
+    }));
+
+  it("cancels a queued reminder once the school's messaging switch is turned off", () =>
+    withTx(async (tx) => {
+      const { f, jobId } = await queuedJob(tx);
+      await tx.query("system", "update public.schools set whatsapp_enabled = false where id = $1", [f.schoolId]);
+      const claimed = await tx.query<{ id: string }>("service", "select id from public.claim_fee_reminder_jobs(10)");
+      expect(claimed.find((c) => c.id === jobId)).toBeUndefined();
+      const [job] = await tx.query<{ status: string }>(
+        "system",
+        "select status from public.fee_reminder_jobs where id = $1",
+        [jobId],
+      );
+      expect(job.status).toBe("cancelled");
+    }));
+
+  it("sends to the guardian's current phone number, not a stale one stored at enqueue time", () =>
+    withTx(async (tx) => {
+      const { f, jobId } = await queuedJob(tx);
+      await tx.query("system", "update public.students set guardian_phone = '+919999900099' where id = $1", [
+        f.students1A[0],
+      ]);
+      const claimed = await tx.query<{ id: string; recipient_phone: string }>(
+        "service",
+        "select * from public.claim_fee_reminder_jobs(10)",
+      );
+      expect(claimed.find((c) => c.id === jobId)?.recipient_phone).toBe("+919999900099");
+    }));
+
+  it("cancels a job recovered from a crashed worker if it is no longer eligible, instead of re-sending it", () =>
+    withTx(async (tx) => {
+      const { f, jobId } = await queuedJob(tx);
+      await tx.query("service", "select * from public.claim_fee_reminder_jobs(10)"); // now 'processing'
+      await tx.query("system", "update public.students set guardian_notifications_consent = false where id = $1", [
+        f.students1A[0],
+      ]);
+      // Simulate a crashed worker: stuck in 'processing' long enough to be recovered.
+      await tx.query("system", "alter table public.fee_reminder_jobs disable trigger fee_reminder_jobs_set_updated_at");
+      await tx.query("system", "update public.fee_reminder_jobs set updated_at = now() - interval '15 minutes' where id = $1", [
+        jobId,
+      ]);
+      await tx.query("system", "alter table public.fee_reminder_jobs enable trigger fee_reminder_jobs_set_updated_at");
+
+      const claimed = await tx.query<{ id: string }>("service", "select id from public.claim_fee_reminder_jobs(10)");
+      expect(claimed.find((c) => c.id === jobId)).toBeUndefined();
+      const [job] = await tx.query<{ status: string }>(
+        "system",
+        "select status from public.fee_reminder_jobs where id = $1",
+        [jobId],
+      );
+      expect(job.status).toBe("cancelled");
+    }));
+
   it("reschedules a successful send a month out while the invoice stays unpaid", () =>
     withTx(async (tx) => {
       const { f, jobId } = await queuedJob(tx);
