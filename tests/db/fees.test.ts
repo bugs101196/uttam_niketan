@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { closePool, createGuardian, createSchool, createUser, Tx, withTx } from "./helpers";
 
@@ -45,6 +46,19 @@ async function insertCashPayment(tx: Tx, f: { schoolId: string; invoiceId: strin
     `insert into public.fee_payments (school_id, invoice_id, amount, method, received_by, recorded_via)
      values ($1, $2, $3, 'cash', $4, $4) returning id`,
     [f.schoolId, f.invoiceId, amount, f.receivedBy],
+  );
+  return row.id;
+}
+
+// Phase 6 (online payments) does not exist yet -- this inserts the row shape
+// the schema already supports, to prove reverse_payment() handles it before
+// any real gateway integration ever writes one.
+async function insertOnlinePayment(tx: Tx, f: { schoolId: string; invoiceId: string; recordedVia: string }, amount = 1000) {
+  const [row] = await tx.query<{ id: string }>(
+    "system",
+    `insert into public.fee_payments (school_id, invoice_id, amount, method, gateway, gateway_payment_id, recorded_via)
+     values ($1, $2, $3, 'online', 'test-gateway', $4, $5) returning id`,
+    [f.schoolId, f.invoiceId, amount, randomUUID(), f.recordedVia],
   );
   return row.id;
 }
@@ -206,6 +220,23 @@ describe("fee RLS and functions", () => {
 
       const error = await tx.fails(f.adminId, "select * from public.reverse_payment($1, $2)", [reversal.id, "undo the undo"]);
       expect(error.code).toBe("55000");
+    }));
+
+  it("reverses an online-method payment without violating the gateway check constraint", () =>
+    withTx(async (tx) => {
+      const f = await createSchool(tx);
+      const invoiceId = await createInvoiceDirect(tx, { ...f, studentId: f.students1A[0] }, "Term 1", 1000);
+      const paymentId = await insertOnlinePayment(tx, { ...f, invoiceId, recordedVia: f.adminId }, 400);
+
+      const [reversal] = await tx.query<{ amount: string; method: string; gateway: string; gateway_payment_id: string | null }>(
+        f.adminId,
+        "select * from public.reverse_payment($1, $2)",
+        [paymentId, "gateway refund issued"],
+      );
+      expect(reversal.amount).toBe("-400.00");
+      expect(reversal.method).toBe("online");
+      expect(reversal.gateway).toBe("test-gateway");
+      expect(reversal.gateway_payment_id).toBeNull();
     }));
 
   // -------------------------------------------------------------------------
